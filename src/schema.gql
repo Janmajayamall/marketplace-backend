@@ -1,0 +1,146 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input BuyerInput {
+  address: String!
+  city: String!
+  firstNamePOC: String!
+  lastNamePOC: String!
+  password: String!
+  phoneNumber: String!
+  pincode: String!
+  state: String!
+}
+
+type BuyerType {
+  address: String!
+  city: String!
+  firstNamePOC: String!
+  id: String!
+  lastNamePOC: String!
+  phoneNumber: String!
+  pincode: String!
+  state: String!
+}
+
+type ColourType {
+  hexValue: String!
+  id: Float!
+  name: String!
+}
+
+type LoginResponseType {
+  token: String!
+}
+
+input ManufacturerInput {
+  companyName: String!
+  description: String!
+  firstNamePOC: String!
+  lastNamePOC: String!
+  password: String!
+  phoneNumber: String!
+}
+
+type ManufacturerType {
+  companyName: String!
+  description: String!
+  firstNamePOC: String!
+  id: String!
+  lastNamePOC: String!
+  phoneNumber: String!
+}
+
+type Mutation {
+  addItemToCart(orderQuantitySize: Float!, productId: String!, productVariationId: String!): Boolean!
+  addProduct(productInput: ProductInput!): String!
+  addProductImage(imagePublicId: String!, productId: String!): ProductImageType!
+  addProductVariations(productId: String!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
+  createBuyer(buyerInput: BuyerInput!): BuyerType!
+  createManufacturer(manufacturerInput: ManufacturerInput!): ManufacturerType!
+  deleteProductImage(productId: String!, productImageId: String!): String!
+  loginBuyer(password: String!, phoneNumber: String!): LoginResponseType!
+  loginManufacturer(password: String!, phoneNumber: String!): LoginResponseType!
+  updateProduct(productId: String!, productInput: ProductInput!): Boolean!
+  updateProductVariation(productVariationId: String!, productVariationInput: ProductVariationInput!): Boolean!
+}
+
+type ProductCategoryType {
+  id: Float!
+  name: String!
+}
+
+type ProductImageType {
+  id: String!
+  productId: String!
+  publicId: String!
+}
+
+input ProductInput {
+  clothComposition: String!
+  description: String!
+  gsm: Float!
+  maxOrderSize: Float!
+  minOrderSize: Float!
+  name: String!
+  pattern: String!
+  productCategoryIds: [Float!]!
+  referenceId: String
+  referenceImageURL: String!
+  width: Float!
+}
+
+type ProductProductCategoryRelationType {
+  product: ProductType
+  productCategory: ProductCategoryType
+  productCategoryId: Float!
+  productId: String!
+}
+
+type ProductType {
+  clothComposition: String!
+  description: String!
+  gsm: Float!
+  id: String!
+  maxOrderSize: Float!
+  minOrderSize: Float!
+  name: String!
+  pattern: String!
+  productCategoryRelations: [ProductProductCategoryRelationType!]
+  productImages: [ProductImageType!]!
+  referenceId: String
+  referenceImageURL: String!
+  variations: [ProductVariationType!]!
+  width: Float!
+}
+
+input ProductVariationInput {
+  colourId: Float!
+  inStock: Boolean!
+  price: Float!
+}
+
+type ProductVariationType {
+  colour: ColourType!
+  colourId: Float!
+  finalPrice: Float!
+  id: String!
+  inStock: Boolean!
+  price: Float!
+}
+
+type Query {
+  getAllColours: [ColourType!]!
+  getCategoryProductsForBuyers(categoryId: Int!): [ProductType!]!
+  getManufacturerProducts: [ProductType!]!
+  getProductCategories: [ProductCategoryType!]!
+  getProductDetails(productId: String!): ProductType!
+  getUploadProductImageSignature: UploadProductImageSignType!
+  sayHelloBuyer: String!
+}
+
+type UploadProductImageSignType {
+  signature: String!
+  timestamp: Float!
+}
