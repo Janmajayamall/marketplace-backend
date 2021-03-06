@@ -30,6 +30,11 @@ type ColourType {
   name: String!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type LoginResponseType {
   token: String!
 }
@@ -53,7 +58,7 @@ type ManufacturerType {
 }
 
 type Mutation {
-  addItemToCart(orderQuantitySize: Float!, productId: String!, productVariationId: String!): Boolean!
+  addItemToOrderCart(orderQuantitySize: Float!, productId: String!, productVariationId: String!): Boolean!
   addProduct(productInput: ProductInput!): String!
   addProductImage(imagePublicId: String!, productId: String!): ProductImageType!
   addProductVariations(productId: String!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
@@ -64,6 +69,34 @@ type Mutation {
   loginManufacturer(password: String!, phoneNumber: String!): LoginResponseType!
   updateProduct(productId: String!, productInput: ProductInput!): Boolean!
   updateProductVariation(productVariationId: String!, productVariationInput: ProductVariationInput!): Boolean!
+}
+
+type OrderCartType {
+  buyerId: String!
+  id: String!
+  manufacturer: ManufacturerType!
+  manufacturerId: String!
+  orderQuantitySize: Float!
+  orderTotalPrice: Float!
+  productClothComposition: String!
+  productDescription: String!
+  productGsm: Float!
+  productId: String!
+  productMaxOrderSize: Float!
+  productMinOrderSize: Float!
+  productName: String!
+  productPattern: String!
+  productReferenceId: String
+  productReferenceImageURL: String!
+  productVariationColourHex: String!
+  productVariationColourId: Float!
+  productVariationColourName: String!
+  productVariationFinalPrice: Float!
+  productVariationId: String!
+  productVariationInStock: Boolean!
+  productVariationPrice: Float!
+  productWidth: Float!
+  timestamp: DateTime!
 }
 
 type ProductCategoryType {
@@ -132,6 +165,7 @@ type ProductVariationType {
 
 type Query {
   getAllColours: [ColourType!]!
+  getBuyerOrderCartItems: [OrderCartType!]!
   getCategoryProductsForBuyers(categoryId: Int!): [ProductType!]!
   getManufacturerProducts: [ProductType!]!
   getProductCategories: [ProductCategoryType!]!

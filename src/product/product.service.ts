@@ -11,6 +11,8 @@ import { v2 as cloudinary } from 'cloudinary';
 import { UploadProductImageSignType } from './productImage/dto/upload-product-image-sign.type';
 import { ProductImageEntity } from './productImage/product-image.entity';
 import { ColourEntity } from './colour/colour.entity';
+import { Int } from '@nestjs/graphql';
+import { convertToInt, roundToTwoPlaces } from 'src/shared/helpers';
 
 @Injectable()
 export class ProductService {
@@ -50,6 +52,10 @@ export class ProductService {
     const product = this.productRepository.create({
       ...productInput,
       manufacturerId: manufacturerId,
+      minOrderSize: convertToInt(productInput.minOrderSize),
+      maxOrderSize: convertToInt(productInput.maxOrderSize),
+      width: roundToTwoPlaces(productInput.width),
+      gsm: roundToTwoPlaces(productInput.gsm),
     });
     return this.productRepository.save(product);
   }
@@ -63,7 +69,13 @@ export class ProductService {
 
     return this.productRepository.update(
       { id: productId },
-      { ...modProductInput },
+      {
+        ...modProductInput,
+        minOrderSize: convertToInt(productInput.minOrderSize),
+        maxOrderSize: convertToInt(productInput.maxOrderSize),
+        width: roundToTwoPlaces(productInput.width),
+        gsm: roundToTwoPlaces(productInput.gsm),
+      },
     );
   }
 

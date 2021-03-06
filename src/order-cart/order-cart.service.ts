@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DataEntityStatus } from 'src/shared/helpers';
 import { Repository } from 'typeorm';
 import { OrderCartEntity } from './order-cart.entity';
 
@@ -18,11 +19,14 @@ export class OrderCartService {
   }
 
   async getOrderCartsByBuyerId(buyerId: string): Promise<OrderCartEntity[]> {
-    return this.orderCartRepository
-      .createQueryBuilder('order-cart')
-      .where('order-cart.buyerId = :id', { id: buyerId })
-      .orderBy('order-cart.timestamp', 'ASC')
-      .leftJoinAndSelect('order-cart.manufacturerId', 'manufacturer')
-      .getMany();
+    return (
+      this.orderCartRepository
+        .createQueryBuilder('order-cart')
+        .where('order-cart.buyerId = :id', { id: buyerId })
+        .where('order-cart.status = :value', { value: DataEntityStatus.ACTIVE })
+        .orderBy('order-cart.timestamp', 'ASC')
+        // .leftJoinAndSelect('order-cart.manufacturerId', 'manufacturer')
+        .getMany()
+    );
   }
 }

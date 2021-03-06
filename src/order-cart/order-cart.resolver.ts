@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { Logger, UseGuards, UseInterceptors } from '@nestjs/common';
 import { OrderCartService } from './order-cart.service';
 import { CurrentUser } from 'src/shared/decorator';
@@ -8,6 +8,7 @@ import { ManufacturerService } from 'src/manufacturer/manufacturer.service';
 import { ProductVariationService } from 'src/product-variation/product-variation.service';
 import { roundToTwoPlaces } from 'src/shared/helpers';
 import { OrderCartEntity } from './order-cart.entity';
+import { OrderCartType } from './dto/order-cart.type';
 
 @Resolver()
 export class OrderCartResolver {
@@ -21,7 +22,7 @@ export class OrderCartResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  async addItemToCart(
+  async addItemToOrderCart(
     // @CurrentUser()
     // currentUser: BuyerEntity,
     @Args('productId')
@@ -59,11 +60,15 @@ export class OrderCartResolver {
     const roundedFinalPricePerUnit = roundToTwoPlaces(
       productVariation.getFinalPrice(),
     );
+    // throw error if roundedOrderQuantity is lesser than MOQ
+    if (roundedOrderQuantity < product.minOrderSize) {
+      throw new Error('Order quantity size is smaller than minimum order size');
+    }
     const orderTotalPrice = roundToTwoPlaces(
       roundedOrderQuantity * roundedFinalPricePerUnit,
     );
 
-    // creat and save order in cart
+    // create and save order in cart
     // @ts-ignore
     const orderCartItem: OrderCartEntity = {
       // order specific
@@ -102,5 +107,12 @@ export class OrderCartResolver {
     await this.orderCartService.addItemToOrderCart(orderCartItem);
 
     return true;
+  }
+
+  @Query(() => [OrderCartType])
+  async getBuyerOrderCartItems(@CurrentUser() currentUser: BuyerEntity) {
+    return await this.orderCartService.getOrderCartsByBuyerId(
+      'a8322b42-8aee-42e9-bbe3-672795ba84ed',
+    );
   }
 }

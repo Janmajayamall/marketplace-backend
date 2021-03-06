@@ -23,7 +23,6 @@ export class ProductVariationService {
       const variation = await this.productVariationRepository.findOne({
         colourId: productVariationInputs[i].colourId,
         productId: productId,
-        price: roundToTwoPlaces(productVariationInputs[i].price),
       });
 
       if (!variation) {

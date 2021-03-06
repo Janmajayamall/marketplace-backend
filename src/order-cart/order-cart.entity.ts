@@ -10,6 +10,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { DataEntityStatus } from './../shared/helpers';
 
 @Entity('order-cart')
 export class OrderCartEntity {
@@ -128,4 +129,11 @@ export class OrderCartEntity {
 
   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
+
+  @Column('enum', {
+    nullable: false,
+    enum: DataEntityStatus,
+    default: DataEntityStatus.ACTIVE,
+  })
+  status: DataEntityStatus;
 }
