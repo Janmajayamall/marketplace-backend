@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { BuyerAddressEntity } from './buyer-address/buyer-address.entity';
 
 @Entity('buyer')
 export class BuyerEntity {
@@ -42,6 +43,14 @@ export class BuyerEntity {
 
   @OneToMany(() => OrderCartEntity, (orderCartEntity) => orderCartEntity.buyer)
   ordersInCart: OrderCartEntity[];
+
+  @OneToMany(
+    () => BuyerAddressEntity,
+    (buyerAddressEntity) => {
+      buyerAddressEntity.buyer;
+    },
+  )
+  addresses: BuyerAddressEntity[];
 
   @BeforeInsert()
   addId() {

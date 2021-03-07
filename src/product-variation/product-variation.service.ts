@@ -30,6 +30,7 @@ export class ProductVariationService {
           this.productVariationRepository.create({
             ...productVariationInputs[i],
             productId,
+            price: roundToTwoPlaces(productVariationInputs[i].price),
           }),
         );
       }
@@ -66,7 +67,10 @@ export class ProductVariationService {
       {
         id: productVariationId,
       },
-      { ...productVariationInput },
+      {
+        ...productVariationInput,
+        price: roundToTwoPlaces(productVariationInput.price),
+      },
     );
   }
 }

@@ -2,6 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input BuyerAddressInput {
+  city: String!
+  line1: String!
+  pincode: String!
+  state: String!
+}
+
+type BuyerAddressType {
+  buyerId: String!
+  city: String!
+  id: String!
+  line1: String!
+  pincode: String!
+  state: String!
+  timestamp: String!
+}
+
 input BuyerInput {
   address: String!
   city: String!
@@ -29,11 +46,6 @@ type ColourType {
   id: Float!
   name: String!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type LoginResponseType {
   token: String!
@@ -67,6 +79,7 @@ type Mutation {
   deleteProductImage(productId: String!, productImageId: String!): String!
   loginBuyer(password: String!, phoneNumber: String!): LoginResponseType!
   loginManufacturer(password: String!, phoneNumber: String!): LoginResponseType!
+  updateBuyerAddress(buyerAddressInput: BuyerAddressInput!): Boolean!
   updateProduct(productId: String!, productInput: ProductInput!): Boolean!
   updateProductVariation(productVariationId: String!, productVariationInput: ProductVariationInput!): Boolean!
 }
@@ -96,7 +109,7 @@ type OrderCartType {
   productVariationInStock: Boolean!
   productVariationPrice: Float!
   productWidth: Float!
-  timestamp: DateTime!
+  timestamp: String!
 }
 
 type ProductCategoryType {
@@ -165,6 +178,7 @@ type ProductVariationType {
 
 type Query {
   getAllColours: [ColourType!]!
+  getBuyerAddresses: [BuyerAddressType!]!
   getBuyerOrderCartItems: [OrderCartType!]!
   getCategoryProductsForBuyers(categoryId: Int!): [ProductType!]!
   getManufacturerProducts: [ProductType!]!

@@ -77,7 +77,7 @@ export class OrderCartResolver {
 
       // buyer details
       //   buyerId: currentUser.id,
-      buyerId: 'a8322b42-8aee-42e9-bbe3-672795ba84ed',
+      buyerId: '821b3d27-dc45-4941-808f-e262b8cb36ea',
 
       // product variation details
       productVariationPrice: productVariation.price,
@@ -112,7 +112,7 @@ export class OrderCartResolver {
   @Query(() => [OrderCartType])
   async getBuyerOrderCartItems(@CurrentUser() currentUser: BuyerEntity) {
     return await this.orderCartService.getOrderCartsByBuyerId(
-      'a8322b42-8aee-42e9-bbe3-672795ba84ed',
+      '821b3d27-dc45-4941-808f-e262b8cb36ea',
     );
   }
 }

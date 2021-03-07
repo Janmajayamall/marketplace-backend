@@ -7,8 +7,12 @@ import { BuyerService } from './buyer.service';
 import { BuyerType } from './buyer.type';
 import { BuyerInput } from './buyer.input';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { ResGql } from 'src/shared/decorator';
+import { CurrentUser, ResGql } from 'src/shared/decorator';
 import { Response } from 'express';
+import { BuyerAddressEntity } from './buyer-address/buyer-address.entity';
+import { BuyerAddressInput } from './buyer-address/dto/buyer-address.input';
+import { BuyerEntity } from './buyer.entity';
+import { BuyerAddressType } from './buyer-address/dto/buyer-address.type';
 
 @Resolver()
 export class BuyerResolver {
@@ -63,5 +67,24 @@ export class BuyerResolver {
     }
 
     throw new UnauthorizedException();
+  }
+
+  @Mutation(() => Boolean)
+  async updateBuyerAddress(
+    @CurrentUser() currentUser: BuyerEntity,
+    @Args('buyerAddressInput') buyerAddressInput: BuyerAddressInput,
+  ) {
+    // for temp
+    const buyerId = '821b3d27-dc45-4941-808f-e262b8cb36ea';
+
+    await this.buyerService.updateAddress(buyerId, buyerAddressInput);
+    return true;
+  }
+
+  @Query(() => [BuyerAddressType])
+  async getBuyerAddresses(@CurrentUser() currentUser: BuyerEntity) {
+    // for temp
+    const buyerId = '821b3d27-dc45-4941-808f-e262b8cb36ea';
+    return await this.buyerService.findBuyerAddressesByBuyerId(buyerId);
   }
 }

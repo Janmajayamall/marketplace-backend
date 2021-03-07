@@ -87,5 +87,5 @@ export class OrderCartType {
   // end manufacturer details
 
   @Field()
-  timestamp: Date;
+  timestamp: string;
 }
