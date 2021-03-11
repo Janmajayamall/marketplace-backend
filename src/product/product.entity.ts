@@ -1,5 +1,4 @@
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
-import { OrderCartEntity } from 'src/order-cart/order-cart.entity';
 import {
   Entity,
   Column,
@@ -8,16 +7,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { ProductVariationEntity } from './../product-variation/product-variation.entity';
-import { ProductProductCategoryRelation } from './productCategory/product-product-category-relation.entity';
-import { ProductImageEntity } from './productImage/product-image.entity';
 
 @Entity('product')
 export class ProductEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column('varchar', { length: 300 })
   name: string;
@@ -41,53 +38,24 @@ export class ProductEntity {
   referenceImageURL: string;
 
   @Column('int')
-  maxOrderSize: number;
-
-  @Column('int')
   minOrderSize: number;
 
   @Column('text', { nullable: true })
   referenceId: string;
 
+  @Column('text')
+  hsnCode: string;
+
+  @Column('float')
+  taxPercentage: number;
+
   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
 
   @Column()
-  manufacturerId: string;
+  manufacturerId: number;
 
-  @OneToMany(
-    () => ProductVariationEntity,
-    (productVariation) => productVariation.product,
-  )
-  variations: ProductVariationEntity[];
-
-  @ManyToOne(
-    () => ManufacturerEntity,
-    (manufacturerEntity) => manufacturerEntity.products,
-    {
-      eager: true,
-    },
-  )
+  @ManyToOne(() => ManufacturerEntity)
   @JoinColumn({ name: 'manufacturerId' })
   manufacturer: ManufacturerEntity;
-
-  @OneToMany(
-    () => ProductProductCategoryRelation,
-    (relation) => relation.product,
-  )
-  productCategoryRelations: ProductProductCategoryRelation[];
-
-  @OneToMany(() => ProductImageEntity, (productImage) => productImage.product)
-  productImages: ProductImageEntity[];
-
-  @OneToMany(
-    () => OrderCartEntity,
-    (orderCartEntity) => orderCartEntity.product,
-  )
-  ordersInCart: OrderCartEntity[];
-
-  @BeforeInsert()
-  addId() {
-    this.id = uuidv4();
-  }
 }

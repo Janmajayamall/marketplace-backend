@@ -5,14 +5,15 @@ import {
   BeforeInsert,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { BuyerEntity } from '../buyer.entity';
+import { BuyerProfileEntity } from '../buyer-profile/buyer-profile.entity';
 
 @Entity('buyer-address')
 export class BuyerAddressEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column('text')
   line1: string;
@@ -27,22 +28,17 @@ export class BuyerAddressEntity {
   state: string;
 
   @Column()
-  buyerId: string;
+  buyerId: number;
 
-  @ManyToOne(() => BuyerEntity, (buyerEntity) => buyerEntity.addresses, {
+  @ManyToOne(() => BuyerProfileEntity, {
     eager: true,
   })
   @JoinColumn({ name: 'buyerId' })
-  buyer: BuyerEntity;
+  buyer: BuyerProfileEntity;
 
   @Column('time without time zone', {
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   timestamp: Date;
-
-  @BeforeInsert()
-  addId() {
-    this.id = uuidv4();
-  }
 }

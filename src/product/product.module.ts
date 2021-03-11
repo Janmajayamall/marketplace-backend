@@ -11,8 +11,6 @@ import { ProductCategoryEntity } from './productCategory/product-category.entity
 import { ProductProductCategoryRelation } from './productCategory/product-product-category-relation.entity';
 import { ProductImageEntity } from './productImage/product-image.entity';
 import { ColourEntity } from './colour/colour.entity';
-import { OrderCartEntity } from 'src/order-cart/order-cart.entity';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -23,7 +21,6 @@ import { OrderCartEntity } from 'src/order-cart/order-cart.entity';
       ProductProductCategoryRelation,
       ProductImageEntity,
       ColourEntity,
-      OrderCartEntity,
     ]),
     ProductVariationModule,
   ],

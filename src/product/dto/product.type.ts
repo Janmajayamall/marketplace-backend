@@ -1,4 +1,5 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { FILE } from 'node:dns';
 import { ProductCategoryType } from '../productCategory/dto/product-category.type';
 import { ProductProductCategoryRelationType } from '../productCategory/dto/product-product-category-relation.type';
 import { ProductImageType } from '../productImage/dto/product-image.type';
@@ -6,7 +7,7 @@ import { ProductVariationType } from './../../product-variation/dto/product-vari
 @ObjectType()
 export class ProductType {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
   name: string;
@@ -30,20 +31,32 @@ export class ProductType {
   referenceImageURL: string;
 
   @Field()
-  maxOrderSize: number;
-
-  @Field()
   minOrderSize: number;
 
   @Field({ nullable: true })
   referenceId: string;
 
+  @Field()
+  hsnCode: string;
+
+  @Field()
+  taxPercentage: number;
+
   @Field((type) => [ProductVariationType])
   variations: ProductVariationType[];
 
-  @Field((type) => [ProductProductCategoryRelationType], { nullable: true })
-  productCategoryRelations: ProductProductCategoryRelationType[];
+  @Field((type) => [ProductCategorySpecifierFixType])
+  categories: ProductCategorySpecifierFixType[];
 
   @Field((type) => [ProductImageType])
-  productImages: ProductImageType[];
+  images: ProductImageType[];
+
+  @Field()
+  timestamp: string;
+}
+
+@ObjectType()
+export class ProductCategorySpecifierFixType {
+  @Field((type) => ProductCategoryType)
+  category: ProductCategoryType;
 }

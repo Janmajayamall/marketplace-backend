@@ -1,4 +1,4 @@
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class ProductVariationInput {
@@ -9,5 +9,14 @@ export class ProductVariationInput {
   inStock: Boolean;
 
   @Field()
-  colourId: number;
+  colourHexCode: string;
+
+  @Field((type) => Int)
+  rChannel: number;
+
+  @Field((type) => Int)
+  gChannel: number;
+
+  @Field((type) => Int)
+  bChannel: number;
 }

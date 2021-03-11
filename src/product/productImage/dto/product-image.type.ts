@@ -3,11 +3,14 @@ import { ObjectType, Field, InputType } from '@nestjs/graphql';
 @ObjectType()
 export class ProductImageType {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
-  productId: string;
+  productId: number;
 
   @Field()
   publicId: string;
+
+  @Field()
+  timestamp: string;
 }

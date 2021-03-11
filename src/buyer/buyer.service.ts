@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BuyerEntity } from './buyer.entity';
-import { BuyerInput } from './buyer.input';
-import * as bcrypt from 'bcrypt';
 import { BuyerAddressInput } from './buyer-address/dto/buyer-address.input';
 import { BuyerAddressEntity } from './buyer-address/buyer-address.entity';
 
@@ -19,25 +17,23 @@ export class BuyerService {
     private buyerAddressRepository: Repository<BuyerAddressEntity>,
   ) {}
 
-  async create(buyerInput: BuyerInput): Promise<BuyerEntity> {
-    const passwordHash = await bcrypt.hash(buyerInput.password, 10);
+  async findBuyerByPhoneNumber(phoneNumber: string): Promise<BuyerEntity> {
+    return this.buyerRepository.findOne({ phoneNumber: phoneNumber });
+  }
+
+  async createBuyer(phoneNumber: string): Promise<BuyerEntity> {
     const buyerEntity = this.buyerRepository.create({
-      ...buyerInput,
-      passwordHash: passwordHash,
+      phoneNumber: phoneNumber,
     });
     return this.buyerRepository.save(buyerEntity);
   }
 
-  async findOneByNumber(phoneNumber: string): Promise<BuyerEntity> {
-    return this.buyerRepository.findOne({ phoneNumber: phoneNumber });
-  }
-
-  async findOneById(id: string): Promise<BuyerEntity> {
+  async findBuyerById(id: number): Promise<BuyerEntity> {
     return this.buyerRepository.findOne({ id: id });
   }
 
   async updateAddress(
-    buyerId: string,
+    buyerId: number,
     addressInput: BuyerAddressInput,
   ): Promise<any> {
     // check if address for buyer exists
@@ -67,7 +63,7 @@ export class BuyerService {
   }
 
   async findBuyerAddressesByBuyerId(
-    buyerId: string,
+    buyerId: number,
   ): Promise<BuyerAddressEntity[]> {
     return this.buyerAddressRepository.find({ where: { buyerId: buyerId } });
   }

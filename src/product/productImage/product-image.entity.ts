@@ -5,33 +5,26 @@ import {
   BeforeInsert,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { ProductEntity } from '../product.entity';
 
 @Entity('product-image')
 export class ProductImageEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column('text')
   publicId: string;
 
   @Column()
-  productId: string;
+  productId: number;
 
   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
 
-  @ManyToOne(
-    () => ProductEntity,
-    (productEntity) => productEntity.productImages,
-  )
+  @ManyToOne(() => ProductEntity)
   @JoinColumn({ name: 'productId' })
   product: ProductEntity;
-
-  @BeforeInsert()
-  addId() {
-    this.id = uuidv4();
-  }
 }

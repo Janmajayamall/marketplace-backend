@@ -4,8 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponseType } from './../shared/dto/login-response.type';
 import { BuyerService } from './buyer.service';
-import { BuyerType } from './buyer.type';
-import { BuyerInput } from './buyer.input';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { CurrentUser, ResGql } from 'src/shared/decorator';
 import { Response } from 'express';
@@ -19,38 +17,45 @@ export class BuyerResolver {
   private readonly logger = new Logger(BuyerResolver.name, true);
 
   constructor(
-    private readonly jwt: JwtService,
+    private readonly jwtService: JwtService,
     private buyerService: BuyerService,
   ) {}
 
-  @Query(() => String)
+  @Query(() => Boolean)
   @UseGuards(JwtGuard)
-  sayHelloBuyer() {
-    return 'dawdaw';
+  isBuyerAuthenticated() {
+    return true;
   }
 
-  @Mutation(() => BuyerType)
-  async createBuyer(
-    @Args('buyerInput')
-    buyerInput: BuyerInput,
+  @Mutation(() => Boolean)
+  async buyerRequestLoginVerificationCode(
+    @Args('phoneNumber') phoneNumber: string,
   ) {
-    return await this.buyerService.create(buyerInput);
+    // send the verification code to phone number
+
+    return true;
   }
 
   @Mutation(() => LoginResponseType)
-  async loginBuyer(
-    @Args('phoneNumber')
-    phoneNumber: string,
-    @Args('password')
-    password: string,
+  async buyerVerifyLoginCode(
+    @Args('phoneNumber') phoneNumber: string,
+    @Args('verificationCode') verificationCode: string,
     @ResGql()
     res: Response,
   ) {
-    const buyer = await this.buyerService.findOneByNumber(phoneNumber);
-    this.logger.debug(buyer);
-    if (buyer && (await bcrypt.compare(password, buyer.passwordHash))) {
-      buyer.passwordHash = null;
-      const jwt = this.jwt.sign({ ...buyer, type: 'buyer' });
+    // check the verification code
+    // if the verification code is correct
+    if (verificationCode === '1202') {
+      // get buyer with phoneNumber
+      let buyer = await this.buyerService.findBuyerByPhoneNumber(phoneNumber);
+
+      // if buyer does not exists by phoneNumber, then create a new buyer
+      if (!buyer) {
+        buyer = await this.buyerService.createBuyer(phoneNumber);
+      }
+
+      // create jwt
+      const jwt = this.jwtService.sign({ ...buyer, type: 'buyer' });
 
       // set cookie
       res.cookie('token', `${jwt}`, {
@@ -64,9 +69,10 @@ export class BuyerResolver {
       return {
         token: `Bearer ${jwt}`,
       };
+    } else {
+      // throw unauthorized error
+      throw new UnauthorizedException();
     }
-
-    throw new UnauthorizedException();
   }
 
   @Mutation(() => Boolean)
@@ -75,7 +81,7 @@ export class BuyerResolver {
     @Args('buyerAddressInput') buyerAddressInput: BuyerAddressInput,
   ) {
     // for temp
-    const buyerId = '821b3d27-dc45-4941-808f-e262b8cb36ea';
+    const buyerId = 1;
 
     await this.buyerService.updateAddress(buyerId, buyerAddressInput);
     return true;
@@ -84,7 +90,7 @@ export class BuyerResolver {
   @Query(() => [BuyerAddressType])
   async getBuyerAddresses(@CurrentUser() currentUser: BuyerEntity) {
     // for temp
-    const buyerId = '821b3d27-dc45-4941-808f-e262b8cb36ea';
+    const buyerId = 1;
     return await this.buyerService.findBuyerAddressesByBuyerId(buyerId);
   }
 }

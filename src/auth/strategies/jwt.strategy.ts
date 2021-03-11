@@ -30,13 +30,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt.strategy') {
 
   async validate(payload: any) {
     const { type } = payload;
-    console.log(payload, 'this is payload');
+
     if (!type) {
       throw new UnauthorizedException();
     }
 
     if (type === 'manufacturer') {
-      const manufacturer = await this.manufacturerService.findOneById(
+      const manufacturer = await this.manufacturerService.findManufacturerById(
         payload.id,
       );
       if (!manufacturer) {
@@ -44,13 +44,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt.strategy') {
       }
       return payload;
     } else if (type === 'buyer') {
-      const buyer = await this.buyerService.findOneById(payload.id);
+      const buyer = await this.buyerService.findBuyerById(payload.id);
       if (!buyer) {
         throw new UnauthorizedException();
       }
       return payload;
     }
-
     throw new UnauthorizedException();
   }
 }

@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class BuyerAddressType {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
   line1: string;
@@ -18,7 +18,7 @@ export class BuyerAddressType {
   state: string;
 
   @Field()
-  buyerId: string;
+  buyerId: number;
 
   @Field()
   timestamp: string;

@@ -1,13 +1,13 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
 import { FILE } from 'dns';
 
-@InputType()
-export class BuyerInput {
+@ObjectType()
+export class BuyerProfileType {
   @Field()
-  phoneNumber: string;
+  id: number;
 
   @Field()
-  password: string;
+  phoneNumber: string;
 
   @Field()
   firstNamePOC: string;

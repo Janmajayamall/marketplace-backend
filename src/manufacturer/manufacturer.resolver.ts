@@ -26,37 +26,54 @@ export class ManufacturerResolver {
   private readonly logger = new Logger(ManufacturerResolver.name, true);
 
   constructor(
-    private readonly jwt: JwtService,
+    private readonly jwtService: JwtService,
     private manufacturerService: ManufacturerService,
   ) {}
 
-  @Mutation(() => ManufacturerType)
-  async createManufacturer(
-    @Args('manufacturerInput')
-    manufacturerInput: ManufacturerInput,
+  @Mutation(() => Boolean)
+  async manufacturerRequestLoginVerificationCode(
+    @Args('phoneNumber') phoneNumber: string,
   ) {
-    return await this.manufacturerService.create(manufacturerInput);
-  }
-
-  @Mutation(() => LoginResponseType)
-  async loginManufacturer(
-    @Args('phoneNumber')
-    phoneNumber: string,
-    @Args('password')
-    password: string,
-    @ResGql()
-    res: Response,
-  ) {
-    const manufacturer = await this.manufacturerService.findOneByNumber(
+    // get manufacturer with phoneNumber
+    const manufacturer = await this.manufacturerService.findManufacturerByPhoneNumber(
       phoneNumber,
     );
 
-    if (
-      manufacturer &&
-      (await bcrypt.compare(password, manufacturer.passwordHash))
-    ) {
-      manufacturer.passwordHash = null;
-      const jwt = this.jwt.sign({ ...manufacturer, type: 'manufacturer' });
+    // if manufacturer does not exists then throw registration error
+    if (!manufacturer) {
+      throw new Error('Manufacturer is not registered');
+    }
+
+    // send the verification code
+    return true;
+  }
+
+  @Mutation(() => LoginResponseType)
+  async manufacturerVerifyLoginCode(
+    @Args('phoneNumber') phoneNumber: string,
+    @Args('verificationCode') verificationCode: string,
+    @ResGql()
+    res: Response,
+  ) {
+    // check verification code
+
+    // if the verification code is correct
+    if (verificationCode === '1202') {
+      // get manufacturer with phoneNumber
+      const manufacturer = await this.manufacturerService.findManufacturerByPhoneNumber(
+        phoneNumber,
+      );
+
+      // if manufacturer does not exists then throw registration error
+      if (!manufacturer) {
+        throw new Error('Manufacturer is not registered');
+      }
+
+      // create jwt
+      const jwt = this.jwtService.sign({
+        ...manufacturer,
+        type: 'manufacturer',
+      });
 
       // set cookie
       res.cookie('token', `${jwt}`, {
@@ -70,8 +87,9 @@ export class ManufacturerResolver {
       return {
         token: `Bearer ${jwt}`,
       };
+    } else {
+      // throw unauthorized error
+      throw new UnauthorizedException();
     }
-
-    throw new UnauthorizedException();
   }
 }

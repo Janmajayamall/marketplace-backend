@@ -11,7 +11,6 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { BuyerModule } from './buyer/buyer.module';
 import { ConfigModule } from '@nestjs/config';
-import { OrderCartModule } from './order-cart/order-cart.module';
 
 @Module({
   imports: [
@@ -31,7 +30,6 @@ import { OrderCartModule } from './order-cart/order-cart.module';
     AuthModule,
     BuyerModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    OrderCartModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

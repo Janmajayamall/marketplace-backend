@@ -10,182 +10,112 @@ input BuyerAddressInput {
 }
 
 type BuyerAddressType {
-  buyerId: String!
+  buyerId: Float!
   city: String!
-  id: String!
+  id: Float!
   line1: String!
   pincode: String!
   state: String!
   timestamp: String!
 }
 
-input BuyerInput {
-  address: String!
-  city: String!
-  firstNamePOC: String!
-  lastNamePOC: String!
-  password: String!
-  phoneNumber: String!
-  pincode: String!
-  state: String!
-}
-
-type BuyerType {
-  address: String!
-  city: String!
-  firstNamePOC: String!
-  id: String!
-  lastNamePOC: String!
-  phoneNumber: String!
-  pincode: String!
-  state: String!
-}
-
-type ColourType {
-  hexValue: String!
-  id: Float!
-  name: String!
-}
-
 type LoginResponseType {
   token: String!
 }
 
-input ManufacturerInput {
-  companyName: String!
-  description: String!
-  firstNamePOC: String!
-  lastNamePOC: String!
-  password: String!
-  phoneNumber: String!
-}
-
-type ManufacturerType {
-  companyName: String!
-  description: String!
-  firstNamePOC: String!
-  id: String!
-  lastNamePOC: String!
-  phoneNumber: String!
-}
-
 type Mutation {
-  addItemToOrderCart(orderQuantitySize: Float!, productId: String!, productVariationId: String!): Boolean!
   addProduct(productInput: ProductInput!): String!
-  addProductImage(imagePublicId: String!, productId: String!): ProductImageType!
-  addProductVariations(productId: String!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
-  createBuyer(buyerInput: BuyerInput!): BuyerType!
-  createManufacturer(manufacturerInput: ManufacturerInput!): ManufacturerType!
-  deleteProductImage(productId: String!, productImageId: String!): String!
-  loginBuyer(password: String!, phoneNumber: String!): LoginResponseType!
-  loginManufacturer(password: String!, phoneNumber: String!): LoginResponseType!
+  addProductImage(imagePublicId: String!, productId: Int!): ProductImageType!
+  addProductVariations(productId: Int!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
+  buyerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
+  buyerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
+  deleteProductImage(productId: Int!, productImageId: Int!): String!
+  manufacturerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
+  manufacturerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
   updateBuyerAddress(buyerAddressInput: BuyerAddressInput!): Boolean!
-  updateProduct(productId: String!, productInput: ProductInput!): Boolean!
-  updateProductVariation(productVariationId: String!, productVariationInput: ProductVariationInput!): Boolean!
+  updateProduct(productId: Int!, productInput: ProductInput!): Boolean!
+  updateProductVariation(productVariationId: Int!, productVariationInput: ProductVariationInput!): Boolean!
 }
 
-type OrderCartType {
-  buyerId: String!
-  id: String!
-  manufacturer: ManufacturerType!
-  manufacturerId: String!
-  orderQuantitySize: Float!
-  orderTotalPrice: Float!
-  productClothComposition: String!
-  productDescription: String!
-  productGsm: Float!
-  productId: String!
-  productMaxOrderSize: Float!
-  productMinOrderSize: Float!
-  productName: String!
-  productPattern: String!
-  productReferenceId: String
-  productReferenceImageURL: String!
-  productVariationColourHex: String!
-  productVariationColourId: Float!
-  productVariationColourName: String!
-  productVariationFinalPrice: Float!
-  productVariationId: String!
-  productVariationInStock: Boolean!
-  productVariationPrice: Float!
-  productWidth: Float!
-  timestamp: String!
+type ProductCategorySpecifierFixType {
+  category: ProductCategoryType!
 }
 
 type ProductCategoryType {
   id: Float!
   name: String!
+  timestamp: String!
 }
 
 type ProductImageType {
-  id: String!
-  productId: String!
+  id: Float!
+  productId: Float!
   publicId: String!
+  timestamp: String!
 }
 
 input ProductInput {
   clothComposition: String!
   description: String!
   gsm: Float!
-  maxOrderSize: Float!
+  hsnCode: String!
   minOrderSize: Float!
   name: String!
   pattern: String!
   productCategoryIds: [Float!]!
   referenceId: String
   referenceImageURL: String!
+  taxPercentage: Float!
   width: Float!
 }
 
-type ProductProductCategoryRelationType {
-  product: ProductType
-  productCategory: ProductCategoryType
-  productCategoryId: Float!
-  productId: String!
-}
-
 type ProductType {
+  categories: [ProductCategorySpecifierFixType!]!
   clothComposition: String!
   description: String!
   gsm: Float!
-  id: String!
-  maxOrderSize: Float!
+  hsnCode: String!
+  id: Float!
+  images: [ProductImageType!]!
   minOrderSize: Float!
   name: String!
   pattern: String!
-  productCategoryRelations: [ProductProductCategoryRelationType!]
-  productImages: [ProductImageType!]!
   referenceId: String
   referenceImageURL: String!
+  taxPercentage: Float!
+  timestamp: String!
   variations: [ProductVariationType!]!
   width: Float!
 }
 
 input ProductVariationInput {
-  colourId: Float!
+  bChannel: Int!
+  colourHexCode: String!
+  gChannel: Int!
   inStock: Boolean!
   price: Float!
+  rChannel: Int!
 }
 
 type ProductVariationType {
-  colour: ColourType!
-  colourId: Float!
-  finalPrice: Float!
-  id: String!
+  bChannel: Int!
+  colourHexCode: String!
+  gChannel: Int!
+  id: Float!
   inStock: Boolean!
   price: Float!
+  rChannel: Int!
+  timestamp: String!
 }
 
 type Query {
-  getAllColours: [ColourType!]!
   getBuyerAddresses: [BuyerAddressType!]!
-  getBuyerOrderCartItems: [OrderCartType!]!
-  getCategoryProductsForBuyers(categoryId: Int!): [ProductType!]!
+  getCategoryProductsForBuyers(categoryName: String!): [ProductType!]!
   getManufacturerProducts: [ProductType!]!
   getProductCategories: [ProductCategoryType!]!
-  getProductDetails(productId: String!): ProductType!
+  getProductDetails(productId: Int!): ProductType!
   getUploadProductImageSignature: UploadProductImageSignType!
-  sayHelloBuyer: String!
+  isBuyerAuthenticated: Boolean!
 }
 
 type UploadProductImageSignType {

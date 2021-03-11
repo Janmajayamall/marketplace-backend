@@ -1,13 +1,13 @@
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, InputType, Int } from '@nestjs/graphql';
 import { ColourType } from 'src/product/colour/dto/colour.type';
 
 @ObjectType()
 export class ProductVariationType {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
-  colourId: number;
+  colourHexCode: string;
 
   @Field()
   price: number;
@@ -15,9 +15,15 @@ export class ProductVariationType {
   @Field()
   inStock: Boolean;
 
-  @Field((type) => ColourType)
-  colour: ColourType;
+  @Field((type) => Int)
+  rChannel: number;
+
+  @Field((type) => Int)
+  gChannel: number;
+
+  @Field((type) => Int)
+  bChannel: number;
 
   @Field()
-  finalPrice: number;
+  timestamp: string;
 }

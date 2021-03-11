@@ -13,7 +13,7 @@ import { ProductCategoryEntity } from './product-category.entity';
 @Entity('product-product-category-relation')
 export class ProductProductCategoryRelation {
   @PrimaryColumn()
-  productId: string;
+  productId: number;
 
   @PrimaryColumn()
   productCategoryId: number;
@@ -21,22 +21,14 @@ export class ProductProductCategoryRelation {
   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
 
-  @ManyToOne(
-    () => ProductEntity,
-    (productEntity) => productEntity.productCategoryRelations,
-    {
-      primary: true,
-      eager: true,
-    },
-  )
+  @ManyToOne(() => ProductEntity, {
+    primary: true,
+    eager: true,
+  })
   @JoinColumn({ name: 'productId' })
   product: ProductEntity;
 
-  @ManyToOne(
-    () => ProductCategoryEntity,
-    (productCategoryEntity) => productCategoryEntity.productRelations,
-    { primary: true, eager: true },
-  )
+  @ManyToOne(() => ProductCategoryEntity, { primary: true, eager: true })
   @JoinColumn({ name: 'productCategoryId' })
   productCategory: ProductCategoryEntity;
 }

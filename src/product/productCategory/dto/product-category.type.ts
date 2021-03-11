@@ -7,4 +7,7 @@ export class ProductCategoryType {
 
   @Field()
   name: string;
+
+  @Field()
+  timestamp: string;
 }

@@ -15,31 +15,24 @@ export class ProductVariationService {
 
   async addMultiple(
     productVariationInputs: ProductVariationInput[],
-    productId: string,
+    productId: number,
   ): Promise<ProductVariationEntity[]> {
     const variationEntities = [];
     // convert to entities
     for (let i = 0; i < productVariationInputs.length; i++) {
-      const variation = await this.productVariationRepository.findOne({
-        colourId: productVariationInputs[i].colourId,
-        productId: productId,
-      });
-
-      if (!variation) {
-        variationEntities.push(
-          this.productVariationRepository.create({
-            ...productVariationInputs[i],
-            productId,
-            price: roundToTwoPlaces(productVariationInputs[i].price),
-          }),
-        );
-      }
+      variationEntities.push(
+        this.productVariationRepository.create({
+          ...productVariationInputs[i],
+          productId,
+          price: roundToTwoPlaces(productVariationInputs[i].price),
+        }),
+      );
     }
     return this.productVariationRepository.save(variationEntities);
   }
 
   async findAllByProductId(
-    productId: string,
+    productId: number,
   ): Promise<ProductVariationEntity[]> {
     return this.productVariationRepository.find({
       where: {
@@ -52,7 +45,7 @@ export class ProductVariationService {
   }
 
   async findOneById(
-    productVariationId: string,
+    productVariationId: number,
   ): Promise<ProductVariationEntity> {
     return this.productVariationRepository.findOne({
       id: productVariationId,
@@ -60,7 +53,7 @@ export class ProductVariationService {
   }
 
   async updateProductVariationById(
-    productVariationId: string,
+    productVariationId: number,
     productVariationInput: ProductVariationInput,
   ): Promise<any> {
     return this.productVariationRepository.update(

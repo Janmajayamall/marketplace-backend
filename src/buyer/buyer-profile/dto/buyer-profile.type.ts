@@ -2,9 +2,9 @@ import { ObjectType, Field, InputType } from '@nestjs/graphql';
 import { FILE } from 'dns';
 
 @ObjectType()
-export class BuyerType {
+export class BuyerProfileType {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
   phoneNumber: string;
@@ -16,14 +16,5 @@ export class BuyerType {
   lastNamePOC: string;
 
   @Field()
-  city: string;
-
-  @Field()
-  state: string;
-
-  @Field()
-  address: string;
-
-  @Field()
-  pincode: string;
+  timestamp: string;
 }

@@ -7,15 +7,15 @@ import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
 export class AuthService {
   constructor(private manufacturerService: ManufacturerService) {}
 
-  async validateManufacturer(
-    phoneNumber: string,
-    password: string,
-  ): Promise<ManufacturerEntity | null> {
-    const user = await this.manufacturerService.findOneByNumber(phoneNumber);
+  // async validateManufacturer(
+  //   phoneNumber: string,
+  //   password: string,
+  // ): Promise<ManufacturerEntity | null> {
+  //   const user = await this.manufacturerService.findOneByNumber(phoneNumber);
 
-    if (user && (await bcrypt.compare(password, user.passwordHash))) {
-      return user;
-    }
-    return null;
-  }
+  //   if (user && (await bcrypt.compare(password, user.passwordHash))) {
+  //     return user;
+  //   }
+  //   return null;
+  // }
 }

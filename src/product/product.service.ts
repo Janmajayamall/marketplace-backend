@@ -33,9 +33,6 @@ export class ProductService {
 
     @InjectRepository(ProductImageEntity)
     private productImageRepository: Repository<ProductImageEntity>,
-
-    @InjectRepository(ColourEntity)
-    private colourEntityRepository: Repository<ColourEntity>,
   ) {
     // configuring cloudinary
     cloudinary.config({
@@ -47,21 +44,21 @@ export class ProductService {
 
   async addProduct(
     productInput: ProductInput,
-    manufacturerId: string,
+    manufacturerId: number,
   ): Promise<ProductEntity> {
     const product = this.productRepository.create({
       ...productInput,
       manufacturerId: manufacturerId,
       minOrderSize: convertToInt(productInput.minOrderSize),
-      maxOrderSize: convertToInt(productInput.maxOrderSize),
       width: roundToTwoPlaces(productInput.width),
       gsm: roundToTwoPlaces(productInput.gsm),
+      taxPercentage: roundToTwoPlaces(productInput.taxPercentage),
     });
     return this.productRepository.save(product);
   }
 
   async updateProduct(
-    productId: string,
+    productId: number,
     productInput: ProductInput,
   ): Promise<any> {
     const modProductInput = { ...productInput };
@@ -72,16 +69,16 @@ export class ProductService {
       {
         ...modProductInput,
         minOrderSize: convertToInt(productInput.minOrderSize),
-        maxOrderSize: convertToInt(productInput.maxOrderSize),
         width: roundToTwoPlaces(productInput.width),
         gsm: roundToTwoPlaces(productInput.gsm),
+        taxPercentage: roundToTwoPlaces(productInput.taxPercentage),
       },
     );
   }
 
   async checkOwnership(
-    productId: string,
-    manufacturerId: string,
+    productId: number,
+    manufacturerId: number,
   ): Promise<Boolean> {
     const product = await this.productRepository.findOne({
       id: productId,
@@ -90,37 +87,67 @@ export class ProductService {
     return !!product;
   }
 
-  async findOneById(productId: string): Promise<ProductEntity> {
+  async findOneById(productId: number): Promise<ProductEntity> {
     return this.productRepository
       .createQueryBuilder('product')
       .where('product.id = :id', { id: productId })
       .orderBy('product.timestamp', 'ASC')
-      .leftJoinAndSelect(
-        'product.productCategoryRelations',
+      .leftJoinAndMapMany(
+        'product.categories',
         'product-product-category-relation',
+        'product-product-category-relation',
+        'product-product-category-relation.productId = product.id',
       )
-      .leftJoinAndSelect(
-        'product-product-category-relation.productCategory',
+      .leftJoinAndMapOne(
+        'product-product-category-relation.category',
         'product-category',
+        'product-category',
+        'product-category.id = product-product-category-relation.productCategoryId',
       )
-      .leftJoinAndSelect('product.productImages', 'product-image')
+      .leftJoinAndMapMany(
+        'product.images',
+        'product-image',
+        'product-image',
+        'product-image.productId = product.id',
+      )
+      .leftJoinAndMapMany(
+        'product.variations',
+        'product-variation',
+        'product-variation',
+        'product-variation.productId = product.id',
+      )
       .getOne();
   }
 
-  async findProductsByManufacturer(manufacturerId: string) {
+  async findProductsByManufacturer(manufacturerId: number) {
     return this.productRepository
       .createQueryBuilder('product')
       .where('product.manufacturerId = :id', { id: manufacturerId })
       .orderBy('product.timestamp', 'ASC')
-      .leftJoinAndSelect(
-        'product.productCategoryRelations',
+      .leftJoinAndMapMany(
+        'product.categories',
         'product-product-category-relation',
+        'product-product-category-relation',
+        'product-product-category-relation.productId = product.id',
       )
-      .leftJoinAndSelect(
-        'product-product-category-relation.productCategory',
+      .leftJoinAndMapOne(
+        'product-product-category-relation.category',
         'product-category',
+        'product-category',
+        'product-category.id = product-product-category-relation.productCategoryId',
       )
-      .leftJoinAndSelect('product.productImages', 'product-image')
+      .leftJoinAndMapMany(
+        'product.images',
+        'product-image',
+        'product-image',
+        'product-image.productId = product.id',
+      )
+      .leftJoinAndMapMany(
+        'product.variations',
+        'product-variation',
+        'product-variation',
+        'product-variation.productId = product.id',
+      )
       .getMany();
   }
 
@@ -128,13 +155,9 @@ export class ProductService {
     return this.productCategoryRepository.find({});
   }
 
-  async findAllAvColours(): Promise<ColourEntity[]> {
-    return this.colourEntityRepository.find({});
-  }
-
   async updateProductCategoryRelations(
     productCategoryIds: number[],
-    productId: string,
+    productId: number,
   ) {
     // delete existing product relations
     await this.productProductCategoryRelation.delete({ productId: productId });
@@ -168,7 +191,7 @@ export class ProductService {
     return { signature: signature, timestamp: timestamp };
   }
 
-  async deleteProductImage(productImageId: string): Promise<any> {
+  async deleteProductImage(productImageId: number): Promise<any> {
     const productImage = await this.productImageRepository.findOne({
       id: productImageId,
     });
@@ -179,7 +202,7 @@ export class ProductService {
   }
 
   async addProductImage(
-    productId: string,
+    productId: number,
     imagePublicId: string,
   ): Promise<ProductImageEntity> {
     const productImage = this.productImageRepository.create({
@@ -189,7 +212,9 @@ export class ProductService {
     return this.productImageRepository.save(productImage);
   }
 
-  async getAllProductsOfCategory(categoryId: number): Promise<ProductEntity[]> {
+  async getAllProductsOfCategoryName(
+    categoryName: string,
+  ): Promise<ProductEntity[]> {
     return this.productRepository
       .createQueryBuilder('product')
       .where((qb) => {
@@ -200,8 +225,23 @@ export class ProductService {
             ProductProductCategoryRelation,
             'product-product-category-relation',
           )
-          .where('product-product-category-relation.productCategoryId = :id', {
-            id: categoryId,
+          // .where('product-product-category-relation.productCategoryId = :id', {
+          //   id: categoryId,
+          // })
+          .where((cqp) => {
+            const productCategorySubquery = cqp
+              .subQuery()
+              .select('product-category.id')
+              .from(ProductCategoryEntity, 'product-category')
+              .where('product-category.name ILIKE :searchTerm', {
+                searchTerm: `%${categoryName}%`,
+              })
+              .getQuery();
+
+            return (
+              'product-product-category-relation.productCategoryId IN' +
+              productCategorySubquery
+            );
           })
           .getQuery();
 
@@ -214,7 +254,7 @@ export class ProductService {
   }
 
   async findOneProductImageById(
-    productImageId: string,
+    productImageId: number,
   ): Promise<ProductImageEntity> {
     return this.productImageRepository.findOne({ id: productImageId });
   }

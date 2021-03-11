@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ManufacturerInput } from './dto/manufacturer.input';
 import { ManufacturerEntity } from './manufacturer.entity';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ManufacturerService {
@@ -14,25 +13,20 @@ export class ManufacturerService {
     private manufacturerRepository: Repository<ManufacturerEntity>,
   ) {}
 
-  async create(
-    manufacturerInput: ManufacturerInput,
-  ): Promise<ManufacturerEntity> {
-    const passwordHash = await bcrypt.hash(manufacturerInput.password, 10);
-    this.logger.debug(passwordHash);
+  async createBuyer(phoneNumber: string): Promise<ManufacturerEntity> {
     const manufacturerEntity = this.manufacturerRepository.create({
-      ...manufacturerInput,
-      passwordHash: passwordHash,
+      phoneNumber: phoneNumber,
     });
     return this.manufacturerRepository.save(manufacturerEntity);
   }
 
-  async findOneByNumber(phoneNumber: string): Promise<ManufacturerEntity> {
-    return this.manufacturerRepository.findOne({
-      phoneNumber: phoneNumber,
-    });
+  async findManufacturerByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<ManufacturerEntity> {
+    return this.manufacturerRepository.findOne({ phoneNumber: phoneNumber });
   }
 
-  async findOneById(id: string): Promise<ManufacturerEntity> {
+  async findManufacturerById(id: number): Promise<ManufacturerEntity> {
     return this.manufacturerRepository.findOne({
       id: id,
     });

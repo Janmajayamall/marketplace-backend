@@ -20,7 +20,6 @@ import { ProductVariationInput } from 'src/product-variation/dto/product-variati
 import { ProductCategoryType } from './productCategory/dto/product-category.type';
 import { UploadProductImageSignType } from './productImage/dto/upload-product-image-sign.type';
 import { ProductImageType } from './productImage/dto/product-image.type';
-import { ColourType } from './colour/dto/colour.type';
 
 @Resolver((of) => ProductType)
 export class ProductResolver {
@@ -42,8 +41,8 @@ export class ProductResolver {
   @Query(() => ProductType)
   // @UseGuards(JwtGuard)
   async getProductDetails(
-    @Args('productId')
-    productId: string,
+    @Args('productId', { type: () => Int })
+    productId: number,
   ) {
     // removed ownership check since buyer will be able to view product details anyway
     // const ownershipCheck = await this.productService.checkOwnership(
@@ -53,7 +52,10 @@ export class ProductResolver {
     // if (ownershipCheck == false) {
     //   throw new Error('Manufacturer does not owns the product');
     // }
-    return await this.productService.findOneById(productId);
+    const d = await this.productService.findOneById(productId);
+    console.log(d);
+    console.log(JSON.stringify(d, null, 2));
+    return d;
   }
 
   @Mutation(() => String)
@@ -84,8 +86,8 @@ export class ProductResolver {
   async updateProduct(
     @CurrentUser()
     currentUser: ManufacturerEntity,
-    @Args('productId')
-    productId: string,
+    @Args('productId', { type: () => Int })
+    productId: number,
     @Args('productInput')
     productInput: ProductInput,
   ) {
@@ -116,8 +118,8 @@ export class ProductResolver {
     currentUser: ManufacturerEntity,
     @Args('productVariations', { type: () => [ProductVariationInput] })
     productVariations: [ProductVariationInput],
-    @Args('productId')
-    productId: string,
+    @Args('productId', { type: () => Int })
+    productId: number,
   ) {
     const ownershipCheck = await this.productService.checkOwnership(
       productId,
@@ -142,14 +144,13 @@ export class ProductResolver {
     currentUser: ManufacturerEntity,
     @Args('productVariationInput')
     productVariationInput: ProductVariationInput,
-    @Args('productVariationId')
-    productVariationId: string,
+    @Args('productVariationId', { type: () => Int })
+    productVariationId: number,
   ) {
     // get the associated product to check ownership
-    const { product } = await this.productVariationService.findOneById(
+    const { productId } = await this.productVariationService.findOneById(
       productVariationId,
     );
-    const productId = product.id;
     const ownershipCheck = await this.productService.checkOwnership(
       productId,
       currentUser.id,
@@ -173,12 +174,6 @@ export class ProductResolver {
     return await this.productService.findAllAvProductCategories();
   }
 
-  @Query(() => [ColourType])
-  @UseGuards(JwtGuard)
-  async getAllColours() {
-    return await this.productService.findAllAvColours();
-  }
-
   @Query(() => UploadProductImageSignType)
   @UseGuards(JwtGuard)
   getUploadProductImageSignature() {
@@ -189,8 +184,8 @@ export class ProductResolver {
   @UseGuards(JwtGuard)
   async deleteProductImage(
     @CurrentUser() currentUser: ManufacturerEntity,
-    @Args('productId') productId: string,
-    @Args('productImageId') productImageId: string,
+    @Args('productId', { type: () => Int }) productId: number,
+    @Args('productImageId', { type: () => Int }) productImageId: number,
   ) {
     // check product ownership
     const ownershipCheck = await this.productService.checkOwnership(
@@ -225,8 +220,8 @@ export class ProductResolver {
   async addProductImage(
     @CurrentUser()
     currentUser: ManufacturerEntity,
-    @Args('productId')
-    productId: string,
+    @Args('productId', { type: () => Int })
+    productId: number,
     @Args('imagePublicId')
     imagePublicId: string,
   ) {
@@ -245,10 +240,12 @@ export class ProductResolver {
 
   @Query(() => [ProductType])
   async getCategoryProductsForBuyers(
-    @Args('categoryId', { type: () => Int })
-    categoryId: number,
+    @Args('categoryName')
+    categoryName: string,
   ) {
-    return await this.productService.getAllProductsOfCategory(categoryId);
+    return await this.productService.getAllProductsOfCategoryName(
+      categoryName.trim(),
+    );
   }
 
   @ResolveField(() => [ProductVariationType])

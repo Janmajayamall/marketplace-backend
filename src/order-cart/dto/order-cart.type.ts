@@ -1,91 +1,85 @@
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import { FILE } from 'node:dns';
-import { ManufacturerType } from 'src/manufacturer/dto/manufacturer.type';
+// import { ObjectType, Field, InputType } from '@nestjs/graphql';
+// import { FILE } from 'node:dns';
+// import { ManufacturerType } from 'src/manufacturer/dto/manufacturer.type';
 
-@ObjectType()
-export class OrderCartType {
-  @Field()
-  id: string;
+// @ObjectType()
+// export class OrderCartType {
+//   @Field()
+//   id: string;
 
-  // order specific details
-  @Field()
-  orderQuantitySize: number;
+//   // order specific details
+//   @Field()
+//   orderQuantitySize: number;
 
-  @Field()
-  orderTotalPrice: number;
-  // end order specific details
+//   @Field()
+//   orderTotalPrice: number;
+//   // end order specific details
 
-  // buyer details
-  @Field()
-  buyerId: string;
-  // end buyer details
+//   // buyer details
+//   @Field()
+//   buyerId: string;
+//   // end buyer details
 
-  // product variation details
-  @Field()
-  productVariationPrice: number;
+//   // product variation details
+//   @Field()
+//   productVariationPrice: number;
 
-  @Field()
-  productVariationFinalPrice: number;
+//   @Field()
+//   productVariationFinalPrice: number;
 
-  @Field()
-  productVariationInStock: Boolean;
+//   @Field()
+//   productVariationInStock: Boolean;
 
-  @Field()
-  productVariationColourId: number;
+//   @Field()
+//   productVariationColourHexCode: string;
 
-  @Field()
-  productVariationColourHex: string;
+//   @Field()
+//   productVariationId: string;
+//   // end product variations details
 
-  @Field()
-  productVariationColourName: string;
+//   // product details
+//   @Field()
+//   productName: string;
 
-  @Field()
-  productVariationId: string;
-  // end product variations details
+//   @Field()
+//   productDescription: string;
 
-  // product details
-  @Field()
-  productName: string;
+//   @Field()
+//   productClothComposition: string;
 
-  @Field()
-  productDescription: string;
+//   @Field()
+//   productWidth: number;
 
-  @Field()
-  productClothComposition: string;
+//   @Field()
+//   productGsm: number;
 
-  @Field()
-  productWidth: number;
+//   @Field()
+//   productPattern: string;
 
-  @Field()
-  productGsm: number;
+//   @Field()
+//   productReferenceImageURL: string;
 
-  @Field()
-  productPattern: string;
+//   @Field()
+//   productMaxOrderSize: number;
 
-  @Field()
-  productReferenceImageURL: string;
+//   @Field()
+//   productMinOrderSize: number;
 
-  @Field()
-  productMaxOrderSize: number;
+//   @Field({ nullable: true })
+//   productReferenceId: string;
 
-  @Field()
-  productMinOrderSize: number;
+//   @Field()
+//   productId: string;
+//   // end product details
 
-  @Field({ nullable: true })
-  productReferenceId: string;
+//   // manufacturer details
+//   @Field()
+//   manufacturerId: string;
 
-  @Field()
-  productId: string;
-  // end product details
+//   @Field((type) => ManufacturerType)
+//   manufacturer: ManufacturerType;
+//   // end manufacturer details
 
-  // manufacturer details
-  @Field()
-  manufacturerId: string;
-
-  @Field((type) => ManufacturerType)
-  manufacturer: ManufacturerType;
-  // end manufacturer details
-
-  @Field()
-  timestamp: string;
-}
+//   @Field()
+//   timestamp: string;
+// }

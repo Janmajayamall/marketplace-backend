@@ -5,7 +5,7 @@ import { ProductCategoryType } from './product-category.type';
 @ObjectType()
 export class ProductProductCategoryRelationType {
   @Field()
-  productId: string;
+  productId: number;
 
   @Field()
   productCategoryId: number;

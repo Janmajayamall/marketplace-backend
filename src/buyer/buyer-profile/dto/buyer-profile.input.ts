@@ -1,15 +1,9 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
 
-@ObjectType()
-export class ManufacturerType {
+@InputType()
+export class BuyerProfileInput {
   @Field()
-  id: number;
-
-  @Field()
-  companyName: string;
-
-  @Field()
-  description: string;
+  buyerId: number;
 
   @Field()
   phoneNumber: string;

@@ -1,139 +1,115 @@
-import { BuyerEntity } from 'src/buyer/buyer.entity';
-import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
-import { ProductVariationEntity } from 'src/product-variation/product-variation.entity';
-import { ProductEntity } from 'src/product/product.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import { DataEntityStatus } from './../shared/helpers';
+// import { BuyerEntity } from 'src/buyer/buyer.entity';
+// import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
+// import { ProductVariationEntity } from 'src/product-variation/product-variation.entity';
+// import { ProductEntity } from 'src/product/product.entity';
+// import {
+//   Entity,
+//   Column,
+//   PrimaryGeneratedColumn,
+//   OneToMany,
+//   ManyToOne,
+//   JoinColumn,
+// } from 'typeorm';
+// import { DataEntityStatus } from './../shared/helpers';
 
-@Entity('order-cart')
-export class OrderCartEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+// @Entity('order-cart')
+// export class OrderCartEntity {
+//   @PrimaryGeneratedColumn('uuid')
+//   id: string;
 
-  // order specific details
-  @Column('float')
-  orderQuantitySize: number;
+//   // order specific details
+//   @Column('float')
+//   orderQuantitySize: number;
 
-  @Column('float')
-  orderTotalPrice: number;
-  // end order specific details
+//   @Column('float')
+//   orderTotalPrice: number;
+//   // end order specific details
 
-  // buyer details
-  @Column()
-  buyerId: string;
+//   // buyer details
+//   @Column()
+//   buyerId: string;
 
-  @ManyToOne(() => BuyerEntity, (buyerEntity) => buyerEntity.ordersInCart, {
-    eager: true,
-  })
-  @JoinColumn({ name: 'buyerId' })
-  buyer: BuyerEntity;
-  // buyer details end
+//   @ManyToOne(() => BuyerEntity)
+//   @JoinColumn({ name: 'buyerId' })
+//   buyer: BuyerEntity;
+//   // buyer details end
 
-  // product variation details
-  @Column('float')
-  productVariationPrice: number;
+//   // product variation details
+//   @Column('float')
+//   productVariationPrice: number;
 
-  @Column('float')
-  productVariationFinalPrice: number;
+//   @Column('float')
+//   productVariationFinalPrice: number;
 
-  @Column('bool')
-  productVariationInStock: Boolean;
+//   @Column('bool')
+//   productVariationInStock: Boolean;
 
-  @Column()
-  productVariationColourId: number;
+//   @Column('text')
+//   productVariationColourHexCode: string;
 
-  @Column('text')
-  productVariationColourHex: string;
+//   @Column()
+//   productVariationId: string;
 
-  @Column('text')
-  productVariationColourName: string;
+//   @ManyToOne(() => ProductVariationEntity)
+//   @JoinColumn({ name: 'productVariationId' })
+//   productVariation: ProductVariationEntity;
+//   // product variation details end
 
-  @Column()
-  productVariationId: string;
+//   // product details
+//   @Column('text')
+//   productName: string;
 
-  @ManyToOne(
-    () => ProductVariationEntity,
-    (productVariationEntity) => productVariationEntity.ordersInCart,
-    {
-      eager: true,
-    },
-  )
-  @JoinColumn({ name: 'productVariationId' })
-  productVariation: ProductVariationEntity;
-  // product variation details end
+//   @Column('text')
+//   productDescription: string;
 
-  // product details
-  @Column('text')
-  productName: string;
+//   @Column('text')
+//   productClothComposition: string;
 
-  @Column('text')
-  productDescription: string;
+//   @Column('float')
+//   productWidth: number;
 
-  @Column('text')
-  productClothComposition: string;
+//   @Column('float')
+//   productGsm: number;
 
-  @Column('float')
-  productWidth: number;
+//   @Column('text')
+//   productPattern: string;
 
-  @Column('float')
-  productGsm: number;
+//   @Column('text')
+//   productReferenceImageURL: string;
 
-  @Column('text')
-  productPattern: string;
+//   @Column('int')
+//   productMaxOrderSize: number;
 
-  @Column('text')
-  productReferenceImageURL: string;
+//   @Column('int')
+//   productMinOrderSize: number;
 
-  @Column('int')
-  productMaxOrderSize: number;
+//   @Column('text', { nullable: true })
+//   productReferenceId;
 
-  @Column('int')
-  productMinOrderSize: number;
+//   @Column()
+//   productId: string;
 
-  @Column('text', { nullable: true })
-  productReferenceId;
+//   @ManyToOne(() => ProductEntity)
+//   @JoinColumn({ name: 'productId' })
+//   product: ProductEntity;
+//   // product details end
 
-  @Column()
-  productId: string;
+//   // manufacturer details
+//   @Column()
+//   manufacturerId: string;
 
-  @ManyToOne(
-    () => ProductEntity,
-    (productEntity) => productEntity.ordersInCart,
-    { eager: true },
-  )
-  @JoinColumn({ name: 'productId' })
-  product: ProductEntity;
-  // product details end
+//   @ManyToOne(() => ManufacturerEntity)
+//   @JoinColumn({ name: 'manufacturerId' })
+//   manufacturer: ManufacturerEntity;
+//   // end manufacturer details
 
-  // manufacturer details
-  @Column()
-  manufacturerId: string;
+//   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+//   timestamp: Date;
 
-  @ManyToOne(
-    () => ManufacturerEntity,
-    (manufacturerEntity) => manufacturerEntity.ordersInCart,
-    {
-      eager: true,
-    },
-  )
-  @JoinColumn({ name: 'manufacturerId' })
-  manufacturer: ManufacturerEntity;
-  // end manufacturer details
-
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
-  timestamp: Date;
-
-  @Column('enum', {
-    nullable: false,
-    enum: DataEntityStatus,
-    default: DataEntityStatus.ACTIVE,
-  })
-  status: DataEntityStatus;
-}
+//   @Column('enum', {
+//     nullable: false,
+//     enum: DataEntityStatus,
+//     default: DataEntityStatus.ACTIVE,
+//   })
+//   status: DataEntityStatus;
+// }

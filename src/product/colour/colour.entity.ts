@@ -14,10 +14,4 @@ export class ColourEntity {
 
   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
-
-  @OneToMany(
-    () => ProductVariationEntity,
-    (productVariation) => productVariation.colour,
-  )
-  productVariations: ProductVariationEntity[];
 }

@@ -1,4 +1,5 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { FILE } from 'node:dns';
 import { ProductVariationInput } from './../../product-variation/dto/product-variation.input';
 @InputType()
 export class ProductInput {
@@ -24,13 +25,16 @@ export class ProductInput {
   referenceImageURL: string;
 
   @Field()
-  maxOrderSize: number;
-
-  @Field()
   minOrderSize: number;
 
   @Field({ nullable: true })
   referenceId: string;
+
+  @Field()
+  hsnCode: string;
+
+  @Field()
+  taxPercentage: number;
 
   @Field((type) => [Number])
   productCategoryIds: number[];
