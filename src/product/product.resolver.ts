@@ -39,7 +39,7 @@ export class ProductResolver {
   }
 
   @Query(() => ProductType)
-  // @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard)
   async getProductDetails(
     @Args('productId', { type: () => Int })
     productId: number,
@@ -52,10 +52,7 @@ export class ProductResolver {
     // if (ownershipCheck == false) {
     //   throw new Error('Manufacturer does not owns the product');
     // }
-    const d = await this.productService.findOneById(productId);
-    console.log(d);
-    console.log(JSON.stringify(d, null, 2));
-    return d;
+    return await this.productService.findOneById(productId);
   }
 
   @Mutation(() => String)
@@ -168,6 +165,36 @@ export class ProductResolver {
     return true;
   }
 
+  @Mutation(() => [ProductVariationType])
+  @UseGuards(JwtGuard)
+  async deleteProductVariation(
+    @CurrentUser()
+    currentUser: ManufacturerEntity,
+    @Args('productVariationId', { type: () => Int })
+    productVariationId: number,
+  ) {
+    this.logger.debug('productId');
+    // get the associated product to check ownership
+    const { productId } = await this.productVariationService.findOneById(
+      productVariationId,
+    );
+    this.logger.debug(productId);
+    const ownershipCheck = await this.productService.checkOwnership(
+      productId,
+      currentUser.id,
+    );
+    if (ownershipCheck == false) {
+      throw new Error('Manufacturer does not owns the product');
+    }
+
+    // delete the product variation
+    await this.productVariationService.deleteProductVariationById(
+      productVariationId,
+    );
+
+    return await this.productVariationService.findAllByProductId(productId);
+  }
+
   @Query(() => [ProductCategoryType])
   @UseGuards(JwtGuard)
   async getProductCategories() {
@@ -180,7 +207,7 @@ export class ProductResolver {
     return this.productService.generateUploadProductImageSignature();
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Int)
   @UseGuards(JwtGuard)
   async deleteProductImage(
     @CurrentUser() currentUser: ManufacturerEntity,

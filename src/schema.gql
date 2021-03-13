@@ -29,7 +29,8 @@ type Mutation {
   addProductVariations(productId: Int!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
   buyerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
   buyerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
-  deleteProductImage(productId: Int!, productImageId: Int!): String!
+  deleteProductImage(productId: Int!, productImageId: Int!): Int!
+  deleteProductVariation(productVariationId: Int!): [ProductVariationType!]!
   manufacturerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
   manufacturerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
   updateBuyerAddress(buyerAddressInput: BuyerAddressInput!): Boolean!

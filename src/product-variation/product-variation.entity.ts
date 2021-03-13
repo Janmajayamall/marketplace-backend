@@ -1,4 +1,3 @@
-import { ColourEntity } from 'src/product/colour/colour.entity';
 import {
   Entity,
   Column,

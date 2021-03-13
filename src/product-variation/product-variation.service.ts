@@ -66,4 +66,10 @@ export class ProductVariationService {
       },
     );
   }
+
+  async deleteProductVariationById(productVariationId: number): Promise<any> {
+    return this.productVariationRepository.delete({
+      id: productVariationId,
+    });
+  }
 }

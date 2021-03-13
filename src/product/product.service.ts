@@ -247,9 +247,30 @@ export class ProductService {
 
         return 'product.id IN ' + productIdsSubQuery;
       })
-      .leftJoinAndSelect('product.productImages', 'product-image')
-      .leftJoinAndSelect('product.variations', 'product-variation')
-      .leftJoinAndSelect('product-variation.colour', 'colour')
+      .leftJoinAndMapMany(
+        'product.categories',
+        'product-product-category-relation',
+        'product-product-category-relation',
+        'product-product-category-relation.productId = product.id',
+      )
+      .leftJoinAndMapOne(
+        'product-product-category-relation.category',
+        'product-category',
+        'product-category',
+        'product-category.id = product-product-category-relation.productCategoryId',
+      )
+      .leftJoinAndMapMany(
+        'product.images',
+        'product-image',
+        'product-image',
+        'product-image.productId = product.id',
+      )
+      .leftJoinAndMapMany(
+        'product.variations',
+        'product-variation',
+        'product-variation',
+        'product-variation.productId = product.id',
+      )
       .getMany();
   }
 
