@@ -1,3 +1,4 @@
+import { DataEntityStatus } from 'src/shared/helpers';
 import {
   Entity,
   Column,
@@ -43,4 +44,11 @@ export class ProductVariationEntity {
 
   @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
+
+  @Column('enum', {
+    nullable: false,
+    enum: DataEntityStatus,
+    default: DataEntityStatus.ACTIVE,
+  })
+  status: DataEntityStatus;
 }

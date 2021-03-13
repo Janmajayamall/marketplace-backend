@@ -28,9 +28,6 @@ export class ProductType {
   pattern: string;
 
   @Field()
-  referenceImageURL: string;
-
-  @Field()
   minOrderSize: number;
 
   @Field({ nullable: true })

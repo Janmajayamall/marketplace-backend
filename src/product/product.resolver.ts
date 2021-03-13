@@ -20,6 +20,7 @@ import { ProductVariationInput } from 'src/product-variation/dto/product-variati
 import { ProductCategoryType } from './productCategory/dto/product-category.type';
 import { UploadProductImageSignType } from './productImage/dto/upload-product-image-sign.type';
 import { ProductImageType } from './productImage/dto/product-image.type';
+import { DataEntityStatus } from 'src/shared/helpers';
 
 @Resolver((of) => ProductType)
 export class ProductResolver {
@@ -39,7 +40,6 @@ export class ProductResolver {
   }
 
   @Query(() => ProductType)
-  @UseGuards(JwtGuard)
   async getProductDetails(
     @Args('productId', { type: () => Int })
     productId: number,
@@ -188,15 +188,15 @@ export class ProductResolver {
     }
 
     // delete the product variation
-    await this.productVariationService.deleteProductVariationById(
+    await this.productVariationService.changeProductVariationStatus(
       productVariationId,
+      DataEntityStatus.DELETED,
     );
 
     return await this.productVariationService.findAllByProductId(productId);
   }
 
   @Query(() => [ProductCategoryType])
-  @UseGuards(JwtGuard)
   async getProductCategories() {
     return await this.productService.findAllAvProductCategories();
   }

@@ -12,7 +12,11 @@ import { UploadProductImageSignType } from './productImage/dto/upload-product-im
 import { ProductImageEntity } from './productImage/product-image.entity';
 import { ColourEntity } from './colour/colour.entity';
 import { Int } from '@nestjs/graphql';
-import { convertToInt, roundToTwoPlaces } from 'src/shared/helpers';
+import {
+  convertToInt,
+  DataEntityStatus,
+  roundToTwoPlaces,
+} from 'src/shared/helpers';
 
 @Injectable()
 export class ProductService {
@@ -90,7 +94,10 @@ export class ProductService {
   async findOneById(productId: number): Promise<ProductEntity> {
     return this.productRepository
       .createQueryBuilder('product')
-      .where('product.id = :id', { id: productId })
+      .where('product.id = :id AND product.status = :status', {
+        id: productId,
+        status: DataEntityStatus.ACTIVE,
+      })
       .orderBy('product.timestamp', 'ASC')
       .leftJoinAndMapMany(
         'product.categories',
@@ -122,7 +129,10 @@ export class ProductService {
   async findProductsByManufacturer(manufacturerId: number) {
     return this.productRepository
       .createQueryBuilder('product')
-      .where('product.manufacturerId = :id', { id: manufacturerId })
+      .where('product.manufacturerId = :id AND product.status = :status', {
+        id: manufacturerId,
+        status: DataEntityStatus.ACTIVE,
+      })
       .orderBy('product.timestamp', 'ASC')
       .leftJoinAndMapMany(
         'product.categories',
@@ -152,7 +162,9 @@ export class ProductService {
   }
 
   async findAllAvProductCategories(): Promise<ProductCategoryEntity[]> {
-    return this.productCategoryRepository.find({});
+    return this.productCategoryRepository.find({
+      status: DataEntityStatus.ACTIVE,
+    });
   }
 
   async updateProductCategoryRelations(
@@ -243,6 +255,9 @@ export class ProductService {
               productCategorySubquery
             );
           })
+          .andWhere('product.status = :status', {
+            status: DataEntityStatus.ACTIVE,
+          })
           .getQuery();
 
         return 'product.id IN ' + productIdsSubQuery;
@@ -271,6 +286,7 @@ export class ProductService {
         'product-variation',
         'product-variation.productId = product.id',
       )
+      .orderBy('product.timestamp', 'ASC')
       .getMany();
   }
 

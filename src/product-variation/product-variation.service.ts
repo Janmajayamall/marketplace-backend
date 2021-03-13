@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ProductVariationEntity } from './product-variation.entity';
 import { ProductVariationInput } from './dto/product-variation.input';
 import { ProductEntity } from 'src/product/product.entity';
-import { roundToTwoPlaces } from 'src/shared/helpers';
+import { DataEntityStatus, roundToTwoPlaces } from 'src/shared/helpers';
 
 @Injectable()
 export class ProductVariationService {
@@ -37,9 +37,10 @@ export class ProductVariationService {
     return this.productVariationRepository.find({
       where: {
         productId,
+        status: DataEntityStatus.ACTIVE,
       },
       order: {
-        timestamp: 'ASC',
+        timestamp: 'DESC',
       },
     });
   }
@@ -49,6 +50,7 @@ export class ProductVariationService {
   ): Promise<ProductVariationEntity> {
     return this.productVariationRepository.findOne({
       id: productVariationId,
+      status: DataEntityStatus.ACTIVE,
     });
   }
 
@@ -67,9 +69,17 @@ export class ProductVariationService {
     );
   }
 
-  async deleteProductVariationById(productVariationId: number): Promise<any> {
-    return this.productVariationRepository.delete({
-      id: productVariationId,
-    });
+  async changeProductVariationStatus(
+    productVariationId: number,
+    toStatus: DataEntityStatus,
+  ) {
+    return this.productVariationRepository.update(
+      {
+        id: productVariationId,
+      },
+      {
+        status: toStatus,
+      },
+    );
   }
 }

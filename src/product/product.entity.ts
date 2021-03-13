@@ -1,4 +1,5 @@
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
+import { DataEntityStatus } from 'src/shared/helpers';
 import {
   Entity,
   Column,
@@ -34,9 +35,6 @@ export class ProductEntity {
   @Column('text')
   pattern: string;
 
-  @Column('text')
-  referenceImageURL: string;
-
   @Column('int')
   minOrderSize: number;
 
@@ -58,4 +56,11 @@ export class ProductEntity {
   @ManyToOne(() => ManufacturerEntity)
   @JoinColumn({ name: 'manufacturerId' })
   manufacturer: ManufacturerEntity;
+
+  @Column('enum', {
+    nullable: false,
+    enum: DataEntityStatus,
+    default: DataEntityStatus.ACTIVE,
+  })
+  status: DataEntityStatus;
 }

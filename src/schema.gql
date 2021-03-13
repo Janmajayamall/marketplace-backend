@@ -33,6 +33,7 @@ type Mutation {
   deleteProductVariation(productVariationId: Int!): [ProductVariationType!]!
   manufacturerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
   manufacturerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
+  placeNewOrder(orderQuantity: Int!, productId: Int!, productVariationId: Int!): Boolean!
   updateBuyerAddress(buyerAddressInput: BuyerAddressInput!): Boolean!
   updateProduct(productId: Int!, productInput: ProductInput!): Boolean!
   updateProductVariation(productVariationId: Int!, productVariationInput: ProductVariationInput!): Boolean!
@@ -65,7 +66,6 @@ input ProductInput {
   pattern: String!
   productCategoryIds: [Float!]!
   referenceId: String
-  referenceImageURL: String!
   taxPercentage: Float!
   width: Float!
 }
@@ -82,7 +82,6 @@ type ProductType {
   name: String!
   pattern: String!
   referenceId: String
-  referenceImageURL: String!
   taxPercentage: Float!
   timestamp: String!
   variations: [ProductVariationType!]!
