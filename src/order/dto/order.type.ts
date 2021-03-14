@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { BuyerProfileType } from 'src/buyer/buyer-profile/dto/buyer-profile.type';
+import { ProductImageType } from 'src/product/productImage/dto/product-image.type';
 
 @ObjectType()
 export class OrderType {
@@ -65,6 +66,9 @@ export class OrderType {
 
   @Field()
   productTaxPercentage: number;
+
+  @Field((type) => [ProductImageType], { nullable: true })
+  productImages: ProductImageType[];
   // PRODUCT DETAILS END
 
   // PRODUCT VARIATION DETAILS

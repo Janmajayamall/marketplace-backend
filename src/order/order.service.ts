@@ -123,7 +123,7 @@ export class OrderService {
         'buyer-profile.id = order.buyerId',
       )
       .leftJoinAndMapMany(
-        'product.images',
+        'product.productImages',
         'product-image',
         'product-image',
         'product-image.productId = order.productId',
@@ -137,7 +137,7 @@ export class OrderService {
       .where('order.buyerId = :id', { id: buyerId })
       .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapMany(
-        'product.images',
+        'product.productImages',
         'product-image',
         'product-image',
         'product-image.productId = order.productId',

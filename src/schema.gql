@@ -19,6 +19,14 @@ type BuyerAddressType {
   timestamp: String!
 }
 
+type BuyerProfileType {
+  firstNamePOC: String!
+  id: Float!
+  lastNamePOC: String!
+  phoneNumber: String!
+  timestamp: String!
+}
+
 type LoginResponseType {
   token: String!
 }
@@ -37,6 +45,37 @@ type Mutation {
   updateBuyerAddress(buyerAddressInput: BuyerAddressInput!): Boolean!
   updateProduct(productId: Int!, productInput: ProductInput!): Boolean!
   updateProductVariation(productVariationId: Int!, productVariationInput: ProductVariationInput!): Boolean!
+}
+
+type OrderType {
+  buyerId: Float!
+  buyerProfile: BuyerProfileType
+  id: Float!
+  manufacturerId: Float!
+  orderQuantity: Float!
+  orderStage: String!
+  productClothComposition: String!
+  productDescription: String!
+  productGsm: Float!
+  productHsnCode: String!
+  productId: Float!
+  productImages: [ProductImageType!]
+  productMinOrderSize: Float!
+  productName: String!
+  productPattern: String!
+  productReferenceId: String!
+  productTaxPercentage: Float!
+  productVariationBChannel: Float!
+  productVariationColourHexCode: String!
+  productVariationGChannel: Float!
+  productVariationId: Float!
+  productVariationInStock: Boolean!
+  productVariationPrice: Float!
+  productVariationRChannel: Float!
+  productWidth: Float!
+  timestamp: String!
+  totalPrice: Float!
+  totalTax: Float!
 }
 
 type ProductCategorySpecifierFixType {
@@ -112,6 +151,8 @@ type Query {
   getBuyerAddresses: [BuyerAddressType!]!
   getCategoryProductsForBuyers(categoryName: String!): [ProductType!]!
   getManufacturerProducts: [ProductType!]!
+  getOrderListForBuyer: [OrderType!]!
+  getOrderListForManufacturer: Boolean!
   getProductCategories: [ProductCategoryType!]!
   getProductDetails(productId: Int!): ProductType!
   getUploadProductImageSignature: UploadProductImageSignType!

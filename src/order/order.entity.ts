@@ -22,6 +22,7 @@ export enum OrderStage {
   PROCESSED_MANUFACTURER = 'processed_manufacturer',
   UNDER_DELIVERY = 'under_delivery',
   DELIVERED = 'delivered',
+  RETURNED = 'returned',
 }
 
 @Entity('order')

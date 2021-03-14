@@ -5,6 +5,7 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { CurrentUser } from 'src/shared/decorator';
 import { BuyerEntity } from 'src/buyer/buyer.entity';
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
+import { OrderType } from './dto/order.type';
 
 @Resolver()
 export class OrderResolver {
@@ -41,5 +42,11 @@ export class OrderResolver {
     @CurrentUser() currentUser: ManufacturerEntity,
   ) {
     return await this.orderService.findOrdersByManufacturerId(currentUser.id);
+  }
+
+  @Query(() => [OrderType])
+  @UseGuards(JwtGuard)
+  async getOrderListForBuyer(@CurrentUser() currentUser: BuyerEntity) {
+    return await this.orderService.findOrdersByBuyerId(currentUser.id);
   }
 }
