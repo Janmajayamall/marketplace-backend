@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { BuyerProfileEntity } from '../buyer-profile/buyer-profile.entity';
+import { BuyerEntity } from '../buyer.entity';
 
 @Entity('buyer-address')
 export class BuyerAddressEntity {
@@ -32,11 +32,11 @@ export class BuyerAddressEntity {
   @Column()
   buyerId: number;
 
-  @ManyToOne(() => BuyerProfileEntity, {
+  @ManyToOne(() => BuyerEntity, {
     eager: true,
   })
   @JoinColumn({ name: 'buyerId' })
-  buyer: BuyerProfileEntity;
+  buyer: BuyerEntity;
 
   @CreateDateColumn()
   timestamp: Date;

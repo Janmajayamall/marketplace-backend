@@ -4,10 +4,7 @@ import { FILE } from 'dns';
 @ObjectType()
 export class BuyerProfileType {
   @Field()
-  id: number;
-
-  @Field()
-  phoneNumber: string;
+  buyerId: number;
 
   @Field()
   firstNamePOC: string;
@@ -16,5 +13,26 @@ export class BuyerProfileType {
   lastNamePOC: string;
 
   @Field()
+  address: string;
+
+  @Field()
+  city: string;
+
+  @Field()
+  state: string;
+
+  @Field()
+  pincode: string;
+
+  @Field()
+  gstin: string;
+
+  @Field()
+  gstVerified: Boolean;
+
+  @Field()
   timestamp: string;
+
+  @Field()
+  lastModifiedTimestamp: string;
 }

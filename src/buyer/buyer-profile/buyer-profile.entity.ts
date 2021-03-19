@@ -2,11 +2,10 @@ import {
   Entity,
   Column,
   PrimaryColumn,
-  BeforeInsert,
-  OneToMany,
   OneToOne,
   JoinColumn,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { BuyerAddressEntity } from '../buyer-address/buyer-address.entity';
@@ -15,10 +14,7 @@ import { BuyerEntity } from '../buyer.entity';
 @Entity('buyer-profile')
 export class BuyerProfileEntity {
   @PrimaryColumn()
-  id: number;
-
-  @Column('varchar', { length: 10 })
-  phoneNumber: string;
+  buyerId: number;
 
   @Column('text')
   firstNamePOC: string;
@@ -29,9 +25,30 @@ export class BuyerProfileEntity {
   @CreateDateColumn()
   timestamp: Date;
 
+  @UpdateDateColumn()
+  lastModifiedTimestamp: Date;
+
+  @Column('text')
+  address: string;
+
+  @Column('text')
+  city: string;
+
+  @Column('text')
+  state: string;
+
+  @Column('varchar', { length: 7 })
+  pincode: string;
+
+  @Column('varchar')
+  gstin: string;
+
+  @Column('bool')
+  gstVerified: Boolean;
+
   @OneToOne(() => BuyerEntity, {
     primary: true,
   })
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'buyerId' })
   buyer: BuyerEntity;
 }

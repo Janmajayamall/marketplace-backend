@@ -10,6 +10,9 @@ import { BuyerAddressInput } from './buyer-address/dto/buyer-address.input';
 import { BuyerEntity } from './buyer.entity';
 import { BuyerAddressType } from './buyer-address/dto/buyer-address.type';
 import { BuyerJwtGuard } from 'src/auth/guards/jwt.guards';
+import { BuyerProfileType } from './buyer-profile/dto/buyer-profile.type';
+import { AuthGuard } from '@nestjs/passport';
+import { BuyerProfileInput } from './buyer-profile/dto/buyer-profile.input';
 
 @Resolver()
 export class BuyerResolver {
@@ -74,22 +77,21 @@ export class BuyerResolver {
     }
   }
 
-  @Mutation(() => Boolean)
-  async updateBuyerAddress(
+  @Mutation(() => BuyerProfileType)
+  @UseGuards(BuyerJwtGuard)
+  async updateBuyerProfile(
     @CurrentUser() currentUser: BuyerEntity,
-    @Args('buyerAddressInput') buyerAddressInput: BuyerAddressInput,
+    @Args('buyerProfileInput') buyerProfileInput: BuyerProfileInput,
   ) {
-    // for temp
-    const buyerId = 1;
-
-    await this.buyerService.updateAddress(buyerId, buyerAddressInput);
-    return true;
+    return await this.buyerService.updateBuyerProfile(
+      currentUser.id,
+      buyerProfileInput,
+    );
   }
 
-  @Query(() => [BuyerAddressType])
-  async getBuyerAddresses(@CurrentUser() currentUser: BuyerEntity) {
-    // for temp
-    const buyerId = 1;
-    return await this.buyerService.findBuyerAddressesByBuyerId(buyerId);
+  @Query(() => BuyerProfileType, { nullable: true })
+  @UseGuards(BuyerJwtGuard)
+  async getBuyerProfile(@CurrentUser() currentUser: BuyerEntity) {
+    return await this.buyerService.findBuyerProfileById(currentUser.id);
   }
 }

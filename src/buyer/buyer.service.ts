@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { BuyerEntity } from './buyer.entity';
 import { BuyerAddressInput } from './buyer-address/dto/buyer-address.input';
 import { BuyerAddressEntity } from './buyer-address/buyer-address.entity';
+import { BuyerProfileEntity } from './buyer-profile/buyer-profile.entity';
+import { BuyerProfileInput } from './buyer-profile/dto/buyer-profile.input';
 
 @Injectable()
 export class BuyerService {
@@ -13,8 +15,8 @@ export class BuyerService {
     @InjectRepository(BuyerEntity)
     private buyerRepository: Repository<BuyerEntity>,
 
-    @InjectRepository(BuyerAddressEntity)
-    private buyerAddressRepository: Repository<BuyerAddressEntity>,
+    @InjectRepository(BuyerProfileEntity)
+    private buyerProfileRepository: Repository<BuyerProfileEntity>,
   ) {}
 
   async findBuyerByPhoneNumber(phoneNumber: string): Promise<BuyerEntity> {
@@ -32,39 +34,42 @@ export class BuyerService {
     return this.buyerRepository.findOne({ id: id });
   }
 
-  async updateAddress(
+  async updateBuyerProfile(
     buyerId: number,
-    addressInput: BuyerAddressInput,
-  ): Promise<any> {
-    // check if address for buyer exists
-    const addressCheck = await this.buyerAddressRepository.findOne({
+    buyerProfileInput: BuyerProfileInput,
+  ): Promise<BuyerProfileEntity> {
+    // check whether buyer profile exists or not
+    const buyerProfile = await this.buyerProfileRepository.findOne({
       buyerId: buyerId,
     });
 
-    // if address is null then create new one
-    if (!addressCheck) {
-      const tempCreate = this.buyerAddressRepository.create({
-        ...addressInput,
-        buyerId: buyerId,
-      });
-      return this.buyerAddressRepository.save(tempCreate);
-    }
-    // else update the existing address
-    else {
-      return this.buyerAddressRepository.update(
+    // if profile exists then update other create a buyer profile
+    if (buyerProfile) {
+      await this.buyerProfileRepository.update(
+        { buyerId: buyerId },
         {
-          buyerId: buyerId,
-        },
-        {
-          ...addressInput,
+          ...buyerProfileInput,
+          gstVerified:
+            buyerProfileInput.gstin === buyerProfile.gstin
+              ? buyerProfile.gstVerified
+              : false,
         },
       );
+    } else {
+      const temp = this.buyerProfileRepository.create({
+        buyerId: buyerId,
+        ...buyerProfileInput,
+        gstVerified: false,
+      });
+      await this.buyerProfileRepository.save(temp);
     }
+
+    return this.buyerProfileRepository.findOne({
+      buyerId: buyerId,
+    });
   }
 
-  async findBuyerAddressesByBuyerId(
-    buyerId: number,
-  ): Promise<BuyerAddressEntity[]> {
-    return this.buyerAddressRepository.find({ where: { buyerId: buyerId } });
+  async findBuyerProfileById(buyerId: number): Promise<BuyerProfileEntity> {
+    return this.buyerProfileRepository.findOne({ buyerId: buyerId });
   }
 }

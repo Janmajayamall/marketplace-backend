@@ -2,28 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input BuyerAddressInput {
+input BuyerProfileInput {
+  address: String!
   city: String!
-  line1: String!
+  firstNamePOC: String!
+  gstin: String!
+  lastNamePOC: String!
   pincode: String!
   state: String!
-}
-
-type BuyerAddressType {
-  buyerId: Float!
-  city: String!
-  id: Float!
-  line1: String!
-  pincode: String!
-  state: String!
-  timestamp: String!
 }
 
 type BuyerProfileType {
+  address: String!
+  buyerId: Float!
+  city: String!
   firstNamePOC: String!
-  id: Float!
+  gstVerified: Boolean!
+  gstin: String!
+  lastModifiedTimestamp: String!
   lastNamePOC: String!
-  phoneNumber: String!
+  pincode: String!
+  state: String!
   timestamp: String!
 }
 
@@ -42,7 +41,7 @@ type Mutation {
   manufacturerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
   manufacturerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
   placeNewOrder(orderQuantity: Int!, productId: Int!, productVariationId: Int!): Boolean!
-  updateBuyerAddress(buyerAddressInput: BuyerAddressInput!): Boolean!
+  updateBuyerProfile(buyerProfileInput: BuyerProfileInput!): BuyerProfileType!
   updateProduct(productId: Int!, productInput: ProductInput!): Boolean!
   updateProductVariation(productVariationId: Int!, productVariationInput: ProductVariationInput!): Boolean!
 }
@@ -143,7 +142,7 @@ type ProductVariationType {
 }
 
 type Query {
-  getBuyerAddresses: [BuyerAddressType!]!
+  getBuyerProfile: BuyerProfileType
   getManufacturerProducts: [ProductType!]!
   getOrderDetailsByIdForManufacturer(orderId: Int!): OrderTypeWithBuyerProfile!
   getOrderListForBuyer: [OrderType!]!
