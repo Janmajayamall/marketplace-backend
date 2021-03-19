@@ -1,4 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { FILE } from 'node:dns';
 import { BuyerProfileType } from 'src/buyer/buyer-profile/dto/buyer-profile.type';
 import { ProductImageType } from 'src/product/productImage/dto/product-image.type';
 
@@ -93,4 +94,13 @@ export class OrderType {
   @Field()
   productVariationBChannel: number;
   // PRODUCT VARIATION DETAILS END
+}
+
+@ObjectType()
+export class OrderTypeWithBuyerProfile {
+  @Field((type) => OrderType)
+  order: OrderType;
+
+  @Field((type) => BuyerProfileType, { nullable: true })
+  buyerProfile: BuyerProfileType;
 }

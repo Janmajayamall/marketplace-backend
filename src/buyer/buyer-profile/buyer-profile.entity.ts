@@ -6,6 +6,7 @@ import {
   OneToMany,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { BuyerAddressEntity } from '../buyer-address/buyer-address.entity';
@@ -25,7 +26,7 @@ export class BuyerProfileEntity {
   @Column('text')
   lastNamePOC: string;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
 
   @OneToOne(() => BuyerEntity, {

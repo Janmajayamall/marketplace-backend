@@ -9,6 +9,8 @@ import {
   AfterLoad,
   OneToMany,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ProductEntity } from './../product/product.entity';
 
@@ -42,8 +44,11 @@ export class ProductVariationEntity {
   @JoinColumn({ name: 'productId' })
   product: ProductEntity;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
+
+  @UpdateDateColumn()
+  lastModifiedTimestamp: Date;
 
   @Column('enum', {
     nullable: false,

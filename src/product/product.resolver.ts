@@ -13,14 +13,14 @@ import { ProductInput } from './dto/product.input';
 import { ProductType } from './dto/product.type';
 import { ProductVariationService } from 'src/product-variation/product-variation.service';
 import { ProductVariationType } from './../product-variation/dto/product-variation.type';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { ManufacturerJwtGuard } from 'src/auth/guards/jwt.guards';
 import { CurrentUser } from 'src/shared/decorator';
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
 import { ProductVariationInput } from 'src/product-variation/dto/product-variation.input';
-import { ProductCategoryType } from './productCategory/dto/product-category.type';
 import { UploadProductImageSignType } from './productImage/dto/upload-product-image-sign.type';
 import { ProductImageType } from './productImage/dto/product-image.type';
-import { DataEntityStatus } from 'src/shared/helpers';
+import { DataEntityStatus, sanitizeProductTags } from 'src/shared/helpers';
+import { ProductEntity } from './product.entity';
 
 @Resolver((of) => ProductType)
 export class ProductResolver {
@@ -31,7 +31,7 @@ export class ProductResolver {
     private productVariationService: ProductVariationService,
   ) {}
   @Query(() => [ProductType])
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async getManufacturerProducts(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -56,7 +56,7 @@ export class ProductResolver {
   }
 
   @Mutation(() => String)
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async addProduct(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -68,18 +68,11 @@ export class ProductResolver {
       productInput,
       currentUser.id,
     );
-
-    // update product category relations
-    await this.productService.updateProductCategoryRelations(
-      productInput.productCategoryIds,
-      product.id,
-    );
-
     return product.id;
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async updateProduct(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -99,17 +92,11 @@ export class ProductResolver {
     // update product details
     await this.productService.updateProduct(productId, productInput);
 
-    // update product category relations
-    await this.productService.updateProductCategoryRelations(
-      productInput.productCategoryIds,
-      productId,
-    );
-
     return true;
   }
 
   @Mutation(() => [ProductVariationType])
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async addProductVariations(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -135,7 +122,7 @@ export class ProductResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async updateProductVariation(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -166,7 +153,7 @@ export class ProductResolver {
   }
 
   @Mutation(() => [ProductVariationType])
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async deleteProductVariation(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -196,19 +183,14 @@ export class ProductResolver {
     return await this.productVariationService.findAllByProductId(productId);
   }
 
-  @Query(() => [ProductCategoryType])
-  async getProductCategories() {
-    return await this.productService.findAllAvProductCategories();
-  }
-
   @Query(() => UploadProductImageSignType)
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   getUploadProductImageSignature() {
     return this.productService.generateUploadProductImageSignature();
   }
 
   @Mutation(() => Int)
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async deleteProductImage(
     @CurrentUser() currentUser: ManufacturerEntity,
     @Args('productId', { type: () => Int }) productId: number,
@@ -243,7 +225,7 @@ export class ProductResolver {
   }
 
   @Mutation(() => ProductImageType)
-  @UseGuards(JwtGuard)
+  @UseGuards(ManufacturerJwtGuard)
   async addProductImage(
     @CurrentUser()
     currentUser: ManufacturerEntity,
@@ -266,17 +248,24 @@ export class ProductResolver {
   }
 
   @Query(() => [ProductType])
-  async getCategoryProductsForBuyers(
-    @Args('categoryName')
-    categoryName: string,
+  async getProductsBySearchPhraseForBuyers(
+    @Args('searchPhrase')
+    searchPhrase: string,
   ) {
-    return await this.productService.getAllProductsOfCategoryName(
-      categoryName.trim(),
-    );
-  }
+    let res: ProductEntity[] = [];
+    const searchWords = searchPhrase.split(' ').filter((word) => word !== '');
 
-  @ResolveField(() => [ProductVariationType])
-  async variations(@Parent() product: ProductType) {
-    return await this.productVariationService.findAllByProductId(product.id);
+    // no search words then return everything
+    if (searchWords.length === 0) {
+      return await this.productService.getAllProductsBySearchPhrase('');
+    }
+
+    for (let i = 0; i < searchWords.length; i++) {
+      const temp = await this.productService.getAllProductsBySearchPhrase(
+        searchWords[i].trim().toLowerCase(),
+      );
+      res = res.concat(temp);
+    }
+    return res;
   }
 }

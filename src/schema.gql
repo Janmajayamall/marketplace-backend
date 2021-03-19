@@ -78,14 +78,9 @@ type OrderType {
   totalTax: Float!
 }
 
-type ProductCategorySpecifierFixType {
-  category: ProductCategoryType!
-}
-
-type ProductCategoryType {
-  id: Float!
-  name: String!
-  timestamp: String!
+type OrderTypeWithBuyerProfile {
+  buyerProfile: BuyerProfileType
+  order: OrderType!
 }
 
 type ProductImageType {
@@ -103,14 +98,13 @@ input ProductInput {
   minOrderSize: Float!
   name: String!
   pattern: String!
-  productCategoryIds: [Float!]!
   referenceId: String
+  tags: [String!]!
   taxPercentage: Float!
   width: Float!
 }
 
 type ProductType {
-  categories: [ProductCategorySpecifierFixType!]!
   clothComposition: String!
   description: String!
   gsm: Float!
@@ -121,6 +115,7 @@ type ProductType {
   name: String!
   pattern: String!
   referenceId: String
+  tags: [String!]!
   taxPercentage: Float!
   timestamp: String!
   variations: [ProductVariationType!]!
@@ -149,12 +144,12 @@ type ProductVariationType {
 
 type Query {
   getBuyerAddresses: [BuyerAddressType!]!
-  getCategoryProductsForBuyers(categoryName: String!): [ProductType!]!
   getManufacturerProducts: [ProductType!]!
+  getOrderDetailsByIdForManufacturer(orderId: Int!): OrderTypeWithBuyerProfile!
   getOrderListForBuyer: [OrderType!]!
-  getOrderListForManufacturer: Boolean!
-  getProductCategories: [ProductCategoryType!]!
+  getOrderListForManufacturer: [OrderType!]!
   getProductDetails(productId: Int!): ProductType!
+  getProductsBySearchPhraseForBuyers(searchPhrase: String!): [ProductType!]!
   getUploadProductImageSignature: UploadProductImageSignType!
   isBuyerAuthenticated: Boolean!
 }

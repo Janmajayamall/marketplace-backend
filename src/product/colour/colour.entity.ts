@@ -1,5 +1,11 @@
 import { ProductVariationEntity } from 'src/product-variation/product-variation.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity('colour')
 export class ColourEntity {
@@ -12,6 +18,6 @@ export class ColourEntity {
   @Column('varchar', { length: 7 })
   hexValue: string;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
 }

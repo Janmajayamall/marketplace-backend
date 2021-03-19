@@ -1,7 +1,4 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import { FILE } from 'node:dns';
-import { ProductCategoryType } from '../productCategory/dto/product-category.type';
-import { ProductProductCategoryRelationType } from '../productCategory/dto/product-product-category-relation.type';
 import { ProductImageType } from '../productImage/dto/product-image.type';
 import { ProductVariationType } from './../../product-variation/dto/product-variation.type';
 @ObjectType()
@@ -42,18 +39,12 @@ export class ProductType {
   @Field((type) => [ProductVariationType])
   variations: ProductVariationType[];
 
-  @Field((type) => [ProductCategorySpecifierFixType])
-  categories: ProductCategorySpecifierFixType[];
-
   @Field((type) => [ProductImageType])
   images: ProductImageType[];
 
+  @Field((type) => [String])
+  tags: string[];
+
   @Field()
   timestamp: string;
-}
-
-@ObjectType()
-export class ProductCategorySpecifierFixType {
-  @Field((type) => ProductCategoryType)
-  category: ProductCategoryType;
 }

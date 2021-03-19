@@ -6,6 +6,7 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { ProductEntity } from '../product.entity';
 import { ProductCategoryEntity } from './product-category.entity';
@@ -18,7 +19,7 @@ export class ProductProductCategoryRelation {
   @PrimaryColumn()
   productCategoryId: number;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
 
   @ManyToOne(() => ProductEntity, {

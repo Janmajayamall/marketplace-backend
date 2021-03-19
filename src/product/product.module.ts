@@ -7,8 +7,6 @@ import { ProductResolver } from './product.resolver';
 import { ProductVariationEntity } from 'src/product-variation/product-variation.entity';
 import { ProductVariationModule } from 'src/product-variation/product-variation.module';
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
-import { ProductCategoryEntity } from './productCategory/product-category.entity';
-import { ProductProductCategoryRelation } from './productCategory/product-product-category-relation.entity';
 import { ProductImageEntity } from './productImage/product-image.entity';
 import { ColourEntity } from './colour/colour.entity';
 @Module({
@@ -17,8 +15,6 @@ import { ColourEntity } from './colour/colour.entity';
       ProductEntity,
       ProductVariationEntity,
       ManufacturerEntity,
-      ProductCategoryEntity,
-      ProductProductCategoryRelation,
       ProductImageEntity,
       ColourEntity,
     ]),

@@ -3,19 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './product.entity';
 import { ProductInput } from './dto/product.input';
-import { ProductVariationEntity } from './../product-variation/product-variation.entity';
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
-import { ProductCategoryEntity } from './productCategory/product-category.entity';
-import { ProductProductCategoryRelation } from './productCategory/product-product-category-relation.entity';
 import { v2 as cloudinary } from 'cloudinary';
 import { UploadProductImageSignType } from './productImage/dto/upload-product-image-sign.type';
 import { ProductImageEntity } from './productImage/product-image.entity';
-import { ColourEntity } from './colour/colour.entity';
-import { Int } from '@nestjs/graphql';
 import {
   convertToInt,
   DataEntityStatus,
   roundToTwoPlaces,
+  sanitizeProductTags,
 } from 'src/shared/helpers';
 
 @Injectable()
@@ -28,12 +24,6 @@ export class ProductService {
 
     @InjectRepository(ManufacturerEntity)
     private manufacturerRepository: Repository<ManufacturerEntity>,
-
-    @InjectRepository(ProductCategoryEntity)
-    private productCategoryRepository: Repository<ProductCategoryEntity>,
-
-    @InjectRepository(ProductProductCategoryRelation)
-    private productProductCategoryRelation: Repository<ProductProductCategoryRelation>,
 
     @InjectRepository(ProductImageEntity)
     private productImageRepository: Repository<ProductImageEntity>,
@@ -57,6 +47,7 @@ export class ProductService {
       width: roundToTwoPlaces(productInput.width),
       gsm: roundToTwoPlaces(productInput.gsm),
       taxPercentage: roundToTwoPlaces(productInput.taxPercentage),
+      tags: sanitizeProductTags(productInput.tags),
     });
     return this.productRepository.save(product);
   }
@@ -65,17 +56,15 @@ export class ProductService {
     productId: number,
     productInput: ProductInput,
   ): Promise<any> {
-    const modProductInput = { ...productInput };
-    delete modProductInput.productCategoryIds;
-
     return this.productRepository.update(
       { id: productId },
       {
-        ...modProductInput,
+        ...productInput,
         minOrderSize: convertToInt(productInput.minOrderSize),
         width: roundToTwoPlaces(productInput.width),
         gsm: roundToTwoPlaces(productInput.gsm),
         taxPercentage: roundToTwoPlaces(productInput.taxPercentage),
+        tags: sanitizeProductTags(productInput.tags),
       },
     );
   }
@@ -100,18 +89,6 @@ export class ProductService {
       })
       .orderBy('product.timestamp', 'ASC')
       .leftJoinAndMapMany(
-        'product.categories',
-        'product-product-category-relation',
-        'product-product-category-relation',
-        'product-product-category-relation.productId = product.id',
-      )
-      .leftJoinAndMapOne(
-        'product-product-category-relation.category',
-        'product-category',
-        'product-category',
-        'product-category.id = product-product-category-relation.productCategoryId',
-      )
-      .leftJoinAndMapMany(
         'product.images',
         'product-image',
         'product-image',
@@ -135,18 +112,6 @@ export class ProductService {
       })
       .orderBy('product.timestamp', 'ASC')
       .leftJoinAndMapMany(
-        'product.categories',
-        'product-product-category-relation',
-        'product-product-category-relation',
-        'product-product-category-relation.productId = product.id',
-      )
-      .leftJoinAndMapOne(
-        'product-product-category-relation.category',
-        'product-category',
-        'product-category',
-        'product-category.id = product-product-category-relation.productCategoryId',
-      )
-      .leftJoinAndMapMany(
         'product.images',
         'product-image',
         'product-image',
@@ -159,33 +124,6 @@ export class ProductService {
         'product-variation.productId = product.id',
       )
       .getMany();
-  }
-
-  async findAllAvProductCategories(): Promise<ProductCategoryEntity[]> {
-    return this.productCategoryRepository.find({
-      status: DataEntityStatus.ACTIVE,
-    });
-  }
-
-  async updateProductCategoryRelations(
-    productCategoryIds: number[],
-    productId: number,
-  ) {
-    // delete existing product relations
-    await this.productProductCategoryRelation.delete({ productId: productId });
-
-    // define new relations
-    const newRelations: ProductProductCategoryRelation[] = productCategoryIds.map(
-      (categoryId) => {
-        return this.productProductCategoryRelation.create({
-          productId: productId,
-          productCategoryId: categoryId,
-        });
-      },
-    );
-
-    // save
-    return this.productProductCategoryRelation.save(newRelations);
   }
 
   generateUploadProductImageSignature(): UploadProductImageSignType {
@@ -224,56 +162,15 @@ export class ProductService {
     return this.productImageRepository.save(productImage);
   }
 
-  async getAllProductsOfCategoryName(
-    categoryName: string,
+  async getAllProductsBySearchPhrase(
+    searchPhrase: string,
   ): Promise<ProductEntity[]> {
     return this.productRepository
       .createQueryBuilder('product')
-      .where((qb) => {
-        const productIdsSubQuery = qb
-          .subQuery()
-          .select('product-product-category-relation.productId')
-          .from(
-            ProductProductCategoryRelation,
-            'product-product-category-relation',
-          )
-          // .where('product-product-category-relation.productCategoryId = :id', {
-          //   id: categoryId,
-          // })
-          .where((cqp) => {
-            const productCategorySubquery = cqp
-              .subQuery()
-              .select('product-category.id')
-              .from(ProductCategoryEntity, 'product-category')
-              .where('product-category.name ILIKE :searchTerm', {
-                searchTerm: `%${categoryName}%`,
-              })
-              .getQuery();
-
-            return (
-              'product-product-category-relation.productCategoryId IN' +
-              productCategorySubquery
-            );
-          })
-          .andWhere('product.status = :status', {
-            status: DataEntityStatus.ACTIVE,
-          })
-          .getQuery();
-
-        return 'product.id IN ' + productIdsSubQuery;
+      .where(`array_to_string(product.tags, ', ') ILIKE :searchPhrase`, {
+        searchPhrase: `%${searchPhrase.trim().toLowerCase()}%`,
       })
-      .leftJoinAndMapMany(
-        'product.categories',
-        'product-product-category-relation',
-        'product-product-category-relation',
-        'product-product-category-relation.productId = product.id',
-      )
-      .leftJoinAndMapOne(
-        'product-product-category-relation.category',
-        'product-category',
-        'product-category',
-        'product-category.id = product-product-category-relation.productCategoryId',
-      )
+      .andWhere('product.status = :status', { status: DataEntityStatus.ACTIVE })
       .leftJoinAndMapMany(
         'product.images',
         'product-image',

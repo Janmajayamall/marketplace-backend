@@ -33,6 +33,6 @@ export class ProductInput {
   @Field()
   taxPercentage: number;
 
-  @Field((type) => [Number])
-  productCategoryIds: number[];
+  @Field((type) => [String])
+  tags: string[];
 }

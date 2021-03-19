@@ -95,6 +95,10 @@ export class OrderService {
     return this.orderRepository
       .createQueryBuilder('order')
       .where('order.manufacturerId = :id', { id: manufacturerId })
+      .andWhere('order.orderStage = :stage1 OR order.orderStage = :stage2', {
+        stage1: OrderStage.PROCESSED_MANUFACTURER,
+        stage2: OrderStage.UNDER_PROCESS_MANUFACTURER,
+      })
       .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapOne(
         'product.buyerProfile',

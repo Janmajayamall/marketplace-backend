@@ -3,7 +3,10 @@ import { PassportModule } from '@nestjs/passport';
 import { ManufacturerModule } from 'src/manufacturer/manufacturer.module';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import {
+  BuyerJwtStrategy,
+  ManufacturerJwtStrategy,
+} from './strategies/jwt.strategies';
 import { BuyerModule } from 'src/buyer/buyer.module';
 
 @Module({
@@ -18,6 +21,6 @@ import { BuyerModule } from 'src/buyer/buyer.module';
       },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, ManufacturerJwtStrategy, BuyerJwtStrategy],
 })
 export class AuthModule {}

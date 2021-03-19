@@ -9,8 +9,9 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 @Entity('product')
 export class ProductEntity {
@@ -47,8 +48,11 @@ export class ProductEntity {
   @Column('float')
   taxPercentage: number;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
+
+  @UpdateDateColumn()
+  lastModifiedTimestamp: Date;
 
   @Column()
   manufacturerId: number;
@@ -56,6 +60,9 @@ export class ProductEntity {
   @ManyToOne(() => ManufacturerEntity)
   @JoinColumn({ name: 'manufacturerId' })
   manufacturer: ManufacturerEntity;
+
+  @Column('text', { array: true })
+  tags: string[];
 
   @Column('enum', {
     nullable: false,

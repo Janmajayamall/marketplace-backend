@@ -6,6 +6,7 @@ import {
   OneToMany,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { ManufacturerEntity } from '../manufacturer.entity';
 
@@ -33,6 +34,6 @@ export class ManufacturerProfileEntity {
   @JoinColumn({ name: 'id' })
   manufacturer: ManufacturerEntity;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
 }

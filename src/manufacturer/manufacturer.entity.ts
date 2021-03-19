@@ -5,6 +5,7 @@ import {
   BeforeInsert,
   OneToMany,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,6 +17,6 @@ export class ManufacturerEntity {
   @Column('varchar', { length: 10 })
   phoneNumber: string;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
 }

@@ -1,5 +1,11 @@
 import { DataEntityStatus } from 'src/shared/helpers';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { ProductEntity } from '../product.entity';
 
 @Entity('product-category')
@@ -10,7 +16,7 @@ export class ProductCategoryEntity {
   @Column('text')
   name: string;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
 
   @Column('enum', {

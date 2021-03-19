@@ -6,6 +6,8 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { BuyerProfileEntity } from '../buyer-profile/buyer-profile.entity';
@@ -36,9 +38,6 @@ export class BuyerAddressEntity {
   @JoinColumn({ name: 'buyerId' })
   buyer: BuyerProfileEntity;
 
-  @Column('time without time zone', {
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
+  @CreateDateColumn()
   timestamp: Date;
 }

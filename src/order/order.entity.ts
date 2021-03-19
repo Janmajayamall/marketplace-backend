@@ -11,13 +11,13 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum OrderStage {
   NEW = 'new',
   CANCELLED = 'cancelled',
-  CONDUCTING_VERIFICATION = 'conducting_verification',
-  WAITING_MANUFACTURER_ACCEPTANCE = 'waiting_manufacturer_acceptance',
   UNDER_PROCESS_MANUFACTURER = 'under_process_manufacturer',
   PROCESSED_MANUFACTURER = 'processed_manufacturer',
   UNDER_DELIVERY = 'under_delivery',
@@ -39,7 +39,7 @@ export class OrderEntity {
     enum: OrderStage,
     default: OrderStage.NEW,
   })
-  orderStage: OrderStage; // change this to enum
+  orderStage: OrderStage;
 
   @Column('float')
   totalPrice: number;
@@ -61,8 +61,11 @@ export class OrderEntity {
   @JoinColumn({ name: 'manufacturerId' })
   manufacturer: ManufacturerEntity;
 
-  @Column('time without time zone', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   timestamp: Date;
+
+  @UpdateDateColumn()
+  lastModifiedTimestamp: Date;
   // ORDER RELATED END
 
   // PRODUCT DETAILS

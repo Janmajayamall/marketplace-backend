@@ -4,13 +4,12 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponseType } from './../shared/dto/login-response.type';
 import { BuyerService } from './buyer.service';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { CurrentUser, ResGql } from 'src/shared/decorator';
 import { Response } from 'express';
-import { BuyerAddressEntity } from './buyer-address/buyer-address.entity';
 import { BuyerAddressInput } from './buyer-address/dto/buyer-address.input';
 import { BuyerEntity } from './buyer.entity';
 import { BuyerAddressType } from './buyer-address/dto/buyer-address.type';
+import { BuyerJwtGuard } from 'src/auth/guards/jwt.guards';
 
 @Resolver()
 export class BuyerResolver {
@@ -22,7 +21,7 @@ export class BuyerResolver {
   ) {}
 
   @Query(() => Boolean)
-  @UseGuards(JwtGuard)
+  @UseGuards(BuyerJwtGuard)
   isBuyerAuthenticated() {
     return true;
   }
