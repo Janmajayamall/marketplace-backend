@@ -20,6 +20,7 @@ import { LoginResponseType } from './../shared/dto/login-response.type';
 import { Response } from 'express';
 import { ResGql } from 'src/shared/decorator';
 import { serialize } from 'cookie';
+import { ManufacturerJwtGuard } from 'src/auth/guards/jwt.guards';
 
 @Resolver()
 export class ManufacturerResolver {
@@ -29,6 +30,12 @@ export class ManufacturerResolver {
     private readonly jwtService: JwtService,
     private manufacturerService: ManufacturerService,
   ) {}
+
+  @Query(() => Boolean)
+  @UseGuards(ManufacturerJwtGuard)
+  isManufacturerAuthenticated() {
+    return true;
+  }
 
   @Mutation(() => Boolean)
   async manufacturerRequestLoginVerificationCode(

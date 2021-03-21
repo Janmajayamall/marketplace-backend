@@ -48,7 +48,6 @@ type Mutation {
 
 type OrderType {
   buyerId: Float!
-  buyerProfile: BuyerProfileType
   id: Float!
   manufacturerId: Float!
   orderQuantity: Float!
@@ -151,6 +150,7 @@ type Query {
   getProductsBySearchPhraseForBuyers(searchPhrase: String!): [ProductType!]!
   getUploadProductImageSignature: UploadProductImageSignType!
   isBuyerAuthenticated: Boolean!
+  isManufacturerAuthenticated: Boolean!
 }
 
 type UploadProductImageSignType {

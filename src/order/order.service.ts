@@ -100,12 +100,6 @@ export class OrderService {
         stage2: OrderStage.UNDER_PROCESS_MANUFACTURER,
       })
       .orderBy('order.timestamp', 'DESC')
-      .leftJoinAndMapOne(
-        'product.buyerProfile',
-        'buyer-profile',
-        'buyer-profile',
-        'buyer-profile.id = order.buyerId',
-      )
       .leftJoinAndMapMany(
         'product.images',
         'product-image',
@@ -120,12 +114,6 @@ export class OrderService {
       .createQueryBuilder('order')
       .where('order.id = :id', { id: orderId })
       .orderBy('order.timestamp', 'DESC')
-      .leftJoinAndMapOne(
-        'product.buyerProfile',
-        'buyer-profile',
-        'buyer-profile',
-        'buyer-profile.id = order.buyerId',
-      )
       .leftJoinAndMapMany(
         'product.productImages',
         'product-image',

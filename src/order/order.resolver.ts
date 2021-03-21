@@ -9,12 +9,16 @@ import { CurrentUser } from 'src/shared/decorator';
 import { BuyerEntity } from 'src/buyer/buyer.entity';
 import { ManufacturerEntity } from 'src/manufacturer/manufacturer.entity';
 import { OrderType, OrderTypeWithBuyerProfile } from './dto/order.type';
+import { BuyerService } from 'src/buyer/buyer.service';
 
 @Resolver()
 export class OrderResolver {
   private readonly logger = new Logger(OrderResolver.name);
 
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private buyerService: BuyerService,
+  ) {}
 
   @Mutation(() => Boolean)
   @UseGuards(BuyerJwtGuard)
@@ -62,7 +66,9 @@ export class OrderResolver {
     }
 
     // get buyer profile
-    const buyerProfile = null;
+    const buyerProfile = await this.buyerService.findBuyerProfileById(
+      order.buyerId,
+    );
 
     return {
       order: order,

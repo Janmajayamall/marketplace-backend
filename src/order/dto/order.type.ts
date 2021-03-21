@@ -24,9 +24,6 @@ export class OrderType {
   @Field()
   buyerId: number;
 
-  @Field({ nullable: true })
-  buyerProfile: BuyerProfileType;
-
   @Field()
   manufacturerId: number;
 

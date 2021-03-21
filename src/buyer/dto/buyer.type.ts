@@ -1,12 +1,10 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import { FILE } from 'node:dns';
 
 @ObjectType()
 export class BuyerType {
   @Field()
   id: number;
-
-  @Field()
-  phoneNumber: string;
 
   @Field()
   firstNamePOC: string;
@@ -25,4 +23,10 @@ export class BuyerType {
 
   @Field()
   pincode: string;
+
+  @Field()
+  gstin: string;
+
+  @Field()
+  gstVerified: boolean;
 }
