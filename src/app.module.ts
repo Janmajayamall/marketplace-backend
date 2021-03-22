@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { BuyerModule } from './buyer/buyer.module';
 import { ConfigModule } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
+import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { OrderModule } from './order/order.module';
     BuyerModule,
     ConfigModule.forRoot({ isGlobal: true }),
     OrderModule,
+    BuyerPaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

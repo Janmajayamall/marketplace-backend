@@ -18,11 +18,8 @@ import {
 export enum OrderStage {
   NEW = 'new',
   CANCELLED = 'cancelled',
-  UNDER_PROCESS_MANUFACTURER = 'under_process_manufacturer',
-  PROCESSED_MANUFACTURER = 'processed_manufacturer',
-  UNDER_DELIVERY = 'under_delivery',
+  PROCESSING = 'processing',
   DELIVERED = 'delivered',
-  RETURNED = 'returned',
 }
 
 @Entity('order')
@@ -42,10 +39,13 @@ export class OrderEntity {
   orderStage: OrderStage;
 
   @Column('float')
-  totalPrice: number;
+  orderTotalPrice: number;
 
   @Column('float')
   totalTax: number;
+
+  @Column('float')
+  grandTotalPrice: number;
 
   @Column()
   buyerId: number;

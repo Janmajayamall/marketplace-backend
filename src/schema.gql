@@ -2,6 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type BuyerPaymentType {
+  buyerId: Float!
+  dueDate: String!
+  grandTotalPrice: Float!
+  lastModifiedTimestamp: String!
+  orderId: Float!
+  orderTotalPrice: Float!
+  paidStatus: Boolean!
+  timestamp: String!
+  totalTax: Float!
+}
+
 input BuyerProfileInput {
   address: String!
   city: String!
@@ -48,10 +60,12 @@ type Mutation {
 
 type OrderType {
   buyerId: Float!
+  grandTotalPrice: Float!
   id: Float!
   manufacturerId: Float!
   orderQuantity: Float!
   orderStage: String!
+  orderTotalPrice: Float!
   productClothComposition: String!
   productDescription: String!
   productGsm: Float!
@@ -72,7 +86,6 @@ type OrderType {
   productVariationRChannel: Float!
   productWidth: Float!
   timestamp: String!
-  totalPrice: Float!
   totalTax: Float!
 }
 
@@ -141,6 +154,7 @@ type ProductVariationType {
 }
 
 type Query {
+  getBuyerPayments: [BuyerPaymentType!]!
   getBuyerProfile: BuyerProfileType
   getManufacturerProducts: [ProductType!]!
   getOrderDetailsByIdForManufacturer(orderId: Int!): OrderTypeWithBuyerProfile!

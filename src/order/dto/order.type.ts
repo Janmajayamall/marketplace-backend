@@ -16,10 +16,13 @@ export class OrderType {
   orderStage: string;
 
   @Field()
-  totalPrice: number;
+  orderTotalPrice: number;
 
   @Field()
   totalTax: number;
+
+  @Field()
+  grandTotalPrice: number;
 
   @Field()
   buyerId: number;

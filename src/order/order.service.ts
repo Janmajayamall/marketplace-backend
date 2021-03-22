@@ -43,19 +43,21 @@ export class OrderService {
     }
 
     // calculating total price
-    const totalPrice = roundToTwoPlaces(
+    const orderTotalPrice = roundToTwoPlaces(
       productVariation.price * convertToInt(orderQuantity),
     );
-    const totalTax = roundToTwoPlaces(
-      totalPrice * (product.taxPercentage / 100),
+    const totalTax = convertToInt(
+      orderTotalPrice * (product.taxPercentage / 100),
     );
+    const grandTotalPrice = roundToTwoPlaces(orderTotalPrice + totalTax);
 
     // creating new order
     const newOrder = this.orderRepository.create({
       // ORDER RELATED
       orderQuantity: convertToInt(orderQuantity),
       orderStage: OrderStage.NEW,
-      totalPrice: totalPrice,
+      orderTotalPrice: orderTotalPrice,
+      grandTotalPrice: grandTotalPrice,
       totalTax: totalTax,
       buyerId: buyerId,
       manufacturerId: product.manufacturerId,
@@ -95,9 +97,8 @@ export class OrderService {
     return this.orderRepository
       .createQueryBuilder('order')
       .where('order.manufacturerId = :id', { id: manufacturerId })
-      .andWhere('order.orderStage = :stage1 OR order.orderStage = :stage2', {
-        stage1: OrderStage.PROCESSED_MANUFACTURER,
-        stage2: OrderStage.UNDER_PROCESS_MANUFACTURER,
+      .andWhere('order.orderStage != :stage1', {
+        stage1: OrderStage.NEW,
       })
       .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapMany(
