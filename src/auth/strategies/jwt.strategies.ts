@@ -23,7 +23,7 @@ export class ManufacturerJwtStrategy extends PassportStrategy(
     super({
       jwtFromRequest: cookieExtractor,
       ignoreExpiration: true,
-      secretOrKey: 'process.env.JWT_SECRET',
+      secretOrKey: process.env.JWT_SECRET,
     });
   }
 
@@ -44,7 +44,6 @@ export class ManufacturerJwtStrategy extends PassportStrategy(
     return payload;
   }
 }
-
 @Injectable()
 export class BuyerJwtStrategy extends PassportStrategy(
   Strategy,
@@ -56,7 +55,7 @@ export class BuyerJwtStrategy extends PassportStrategy(
     super({
       jwtFromRequest: cookieExtractor,
       ignoreExpiration: true,
-      secretOrKey: 'process.env.JWT_SECRET',
+      secretOrKey: process.env.JWT_SECRET,
     });
   }
 

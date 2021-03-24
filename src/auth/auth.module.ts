@@ -15,7 +15,7 @@ import { BuyerModule } from 'src/buyer/buyer.module';
     BuyerModule,
     PassportModule,
     JwtModule.register({
-      secret: 'process.env.JWT_SECRET',
+      secret: process.env.JWT_SECRET,
       signOptions: {
         expiresIn: '7d',
       },

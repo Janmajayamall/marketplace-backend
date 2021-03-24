@@ -15,7 +15,7 @@ import { BuyerService } from './buyer.service';
       BuyerProfileEntity,
     ]),
     JwtModule.register({
-      secret: 'process.env.JWT_SECRET',
+      secret: process.env.JWT_SECRET,
       signOptions: {
         expiresIn: '7d',
       },

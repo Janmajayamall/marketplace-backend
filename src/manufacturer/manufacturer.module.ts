@@ -9,7 +9,7 @@ import { ManufacturerService } from './manufacturer.service';
   imports: [
     TypeOrmModule.forFeature([ManufacturerEntity]),
     JwtModule.register({
-      secret: 'process.env.JWT_SECRET',
+      secret: process.env.JWT_SECRET,
       signOptions: {
         expiresIn: '7d',
       },

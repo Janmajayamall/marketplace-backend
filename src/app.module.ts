@@ -10,9 +10,10 @@ import { ProductVariationModule } from './product-variation/product-variation.mo
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { BuyerModule } from './buyer/buyer.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
 import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
+
 
 @Module({
   imports: [
@@ -25,13 +26,30 @@ import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
       },
       context: ({ req, res }) => ({ req, res }),
     }),
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_DATABASE'),
+        entities: ['dist/**/*.entity{.ts,.js}'],
+        synchronize: true,
+        logging: true,
+      }),
+    }),
     ManufacturerModule,
     ProductModule,
     ProductVariationModule,
     AuthModule,
     BuyerModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      envFilePath: [`.${process.env.NODE_ENV}.env`],
+      isGlobal: true,
+    }),
     OrderModule,
     BuyerPaymentModule,
   ],
