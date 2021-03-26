@@ -8,16 +8,23 @@ import {
   ManufacturerJwtStrategy,
 } from './strategies/jwt.strategies';
 import { BuyerModule } from 'src/buyer/buyer.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ManufacturerModule,
     BuyerModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: {
-        expiresIn: '7d',
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: '7d',
+          },
+        };
       },
     }),
   ],

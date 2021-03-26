@@ -14,7 +14,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
 import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
 
-
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -29,27 +28,31 @@ import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
-        entities: ['dist/**/*.entity{.ts,.js}'],
-        synchronize: true,
-        logging: true,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        console.log(configService.get('DB_HOST'), ' :this is itttt  app mode');
+        return {
+          type: 'postgres',
+          host: configService.get('DB_HOST'),
+          port: configService.get('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_DATABASE'),
+          entities: ['dist/**/*.entity{.ts,.js}'],
+          synchronize: true,
+          logging: true,
+        };
+      },
+    }),
+    ConfigModule.forRoot({
+      envFilePath: [`.${process.env.NODE_ENV}.env`],
+      isGlobal: true,
     }),
     ManufacturerModule,
     ProductModule,
     ProductVariationModule,
     AuthModule,
     BuyerModule,
-    ConfigModule.forRoot({
-      envFilePath: [`.${process.env.NODE_ENV}.env`],
-      isGlobal: true,
-    }),
+
     OrderModule,
     BuyerPaymentModule,
   ],
