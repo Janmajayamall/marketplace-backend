@@ -63,7 +63,7 @@ export class BuyerResolver {
       res.cookie('token', `${jwt}`, {
         httpOnly: true,
         // secure: process.env.NODE_ENV !== 'development',
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: 100000000,
         path: '/',
       });
