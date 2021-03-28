@@ -83,13 +83,13 @@ export class ManufacturerResolver {
       });
 
       // set cookie
-      res.cookie('token', `${jwt}`, {
-        httpOnly: true,
-        // secure: process.env.NODE_ENV !== 'development',
-        sameSite: 'none',
-        maxAge: 100000000,
-        path: '/',
-      });
+      // res.cookie('token', `${jwt}`, {
+      //   httpOnly: true,
+      //   // secure: process.env.NODE_ENV !== 'development',
+      //   sameSite: 'none',
+      //   maxAge: 100000000,
+      //   path: '/',
+      // });
 
       return {
         token: `Bearer ${jwt}`,

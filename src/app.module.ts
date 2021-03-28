@@ -29,11 +29,6 @@ import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        console.log(
-          configService.get('DB_HOST'),
-          configService.get('DB_PASSWORD'),
-          ' :this is itttt  app mode',
-        );
         return {
           type: 'postgres',
           host: configService.get('DB_HOST'),

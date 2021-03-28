@@ -21,8 +21,8 @@ export class ManufacturerJwtStrategy extends PassportStrategy(
 
   constructor(private manufacturerService: ManufacturerService) {
     super({
-      jwtFromRequest: cookieExtractor,
-      ignoreExpiration: true,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     });
   }
@@ -37,7 +37,7 @@ export class ManufacturerJwtStrategy extends PassportStrategy(
     const manufacturer = await this.manufacturerService.findManufacturerById(
       payload.id,
     );
-    this.logger.debug(JSON.stringify(manufacturer));
+
     if (!manufacturer) {
       throw new UnauthorizedException();
     }
@@ -53,8 +53,8 @@ export class BuyerJwtStrategy extends PassportStrategy(
 
   constructor(private buyerService: BuyerService) {
     super({
-      jwtFromRequest: cookieExtractor,
-      ignoreExpiration: true,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     });
   }
@@ -67,7 +67,7 @@ export class BuyerJwtStrategy extends PassportStrategy(
     }
 
     const buyer = await this.buyerService.findBuyerById(payload.id);
-    this.logger.debug(JSON.stringify(buyer));
+
     if (!buyer) {
       throw new UnauthorizedException();
     }
