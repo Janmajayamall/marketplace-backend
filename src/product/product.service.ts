@@ -40,12 +40,19 @@ export class ProductService {
     productInput: ProductInput,
     manufacturerId: number,
   ): Promise<ProductEntity> {
+    // check whether manufacturer exists or not
+    const manufacturer = await this.manufacturerRepository.findOne({
+      id: manufacturerId,
+    });
+
+    if (manufacturer == undefined) {
+      throw new Error('Manufacturer does not exists');
+    }
+
     const product = this.productRepository.create({
       ...productInput,
       manufacturerId: manufacturerId,
       minOrderSize: convertToInt(productInput.minOrderSize),
-      width: roundToTwoPlaces(productInput.width),
-      gsm: roundToTwoPlaces(productInput.gsm),
       taxPercentage: roundToTwoPlaces(productInput.taxPercentage),
       tags: sanitizeProductTags(productInput.tags),
     });
@@ -61,8 +68,6 @@ export class ProductService {
       {
         ...productInput,
         minOrderSize: convertToInt(productInput.minOrderSize),
-        width: roundToTwoPlaces(productInput.width),
-        gsm: roundToTwoPlaces(productInput.gsm),
         taxPercentage: roundToTwoPlaces(productInput.taxPercentage),
         tags: sanitizeProductTags(productInput.tags),
       },

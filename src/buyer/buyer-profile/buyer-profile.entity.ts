@@ -37,7 +37,7 @@ export class BuyerProfileEntity {
   @Column('text')
   state: string;
 
-  @Column('varchar', { length: 7 })
+  @Column('text')
   pincode: string;
 
   @Column('varchar')

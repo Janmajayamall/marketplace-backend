@@ -27,11 +27,11 @@ export class ProductEntity {
   @Column('text')
   clothComposition: string;
 
-  @Column('float')
-  width: number;
+  @Column('text')
+  width: string;
 
-  @Column('float')
-  gsm: number;
+  @Column('text')
+  gsm: string;
 
   @Column('text')
   pattern: string;
@@ -39,7 +39,7 @@ export class ProductEntity {
   @Column('int')
   minOrderSize: number;
 
-  @Column('text', { nullable: true })
+  @Column('text')
   referenceId: string;
 
   @Column('text')
@@ -63,6 +63,9 @@ export class ProductEntity {
 
   @Column('text', { array: true })
   tags: string[];
+
+  @Column('text')
+  usage: string;
 
   @Column('enum', {
     nullable: false,

@@ -24,6 +24,9 @@ export class OrderType {
   @Field()
   grandTotalPrice: number;
 
+  @Field({ nullable: true })
+  deliveryCharges: number;
+
   @Field()
   buyerId: number;
 
@@ -48,10 +51,10 @@ export class OrderType {
   productClothComposition: string;
 
   @Field()
-  productWidth: number;
+  productWidth: string;
 
   @Field()
-  productGsm: number;
+  productGsm: string;
 
   @Field()
   productPattern: string;
@@ -68,7 +71,7 @@ export class OrderType {
   @Field()
   productTaxPercentage: number;
 
-  @Field((type) => [ProductImageType], { nullable: true })
+  @Field((type) => [ProductImageType])
   productImages: ProductImageType[];
   // PRODUCT DETAILS END
 

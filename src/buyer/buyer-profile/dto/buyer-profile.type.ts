@@ -1,5 +1,4 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import { FILE } from 'dns';
 
 @ObjectType()
 export class BuyerProfileType {

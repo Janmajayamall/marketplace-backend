@@ -16,10 +16,10 @@ export class ProductType {
   clothComposition: string;
 
   @Field()
-  width: number;
+  width: string;
 
   @Field()
-  gsm: number;
+  gsm: string;
 
   @Field()
   pattern: string;
@@ -46,5 +46,11 @@ export class ProductType {
   tags: string[];
 
   @Field()
+  usage: string;
+
+  @Field()
   timestamp: string;
+
+  @Field()
+  manufacturerId: number;
 }

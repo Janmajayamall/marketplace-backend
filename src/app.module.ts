@@ -14,6 +14,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
 import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
 
+console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
+console.log(
+  `**************************** CONNECTED TO ${process.env.NODE_ENV.toUpperCase()} DATABASE ****************************`,
+);
+console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
 @Module({
   imports: [
     GraphQLModule.forRoot({

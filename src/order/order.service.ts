@@ -102,7 +102,7 @@ export class OrderService {
       })
       .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapMany(
-        'product.images',
+        'order.images',
         'product-image',
         'product-image',
         'product-image.productId = order.productId',
@@ -116,7 +116,7 @@ export class OrderService {
       .where('order.id = :id', { id: orderId })
       .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapMany(
-        'product.productImages',
+        'order.productImages',
         'product-image',
         'product-image',
         'product-image.productId = order.productId',
@@ -128,13 +128,13 @@ export class OrderService {
     return this.orderRepository
       .createQueryBuilder('order')
       .where('order.buyerId = :id', { id: buyerId })
-      .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapMany(
-        'product.productImages',
+        'order.productImages',
         'product-image',
         'product-image',
         'product-image.productId = order.productId',
       )
+      .orderBy('order.timestamp', 'DESC')
       .getMany();
   }
 }

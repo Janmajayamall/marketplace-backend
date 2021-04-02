@@ -1,12 +1,4 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  ResolveField,
-  Parent,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { Logger, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductInput } from './dto/product.input';
@@ -21,6 +13,7 @@ import { UploadProductImageSignType } from './productImage/dto/upload-product-im
 import { ProductImageType } from './productImage/dto/product-image.type';
 import { DataEntityStatus, sanitizeProductTags } from 'src/shared/helpers';
 import { ProductEntity } from './product.entity';
+import { AdminGuard } from 'src/auth/guards/other.guards';
 
 @Resolver((of) => ProductType)
 export class ProductResolver {
@@ -30,6 +23,7 @@ export class ProductResolver {
     private productService: ProductService,
     private productVariationService: ProductVariationService,
   ) {}
+
   @Query(() => [ProductType])
   @UseGuards(ManufacturerJwtGuard)
   async getManufacturerProducts(
@@ -55,39 +49,61 @@ export class ProductResolver {
     return await this.productService.findOneById(productId);
   }
 
+  @Query(() => [ProductType])
+  async getProductsBySearchPhraseForBuyers(
+    @Args('searchPhrase')
+    searchPhrase: string,
+  ) {
+    let res: ProductEntity[] = [];
+    const searchWords = searchPhrase.split(' ').filter((word) => word !== '');
+
+    // no search words then return everything
+    if (searchWords.length === 0) {
+      return await this.productService.getAllProductsBySearchPhrase('');
+    }
+
+    for (let i = 0; i < searchWords.length; i++) {
+      const temp = await this.productService.getAllProductsBySearchPhrase(
+        searchWords[i].trim().toLowerCase(),
+      );
+      res = res.concat(temp);
+    }
+    return res;
+  }
+
+  // ALL ADMIN GUARDS
+
   @Mutation(() => String)
-  @UseGuards(ManufacturerJwtGuard)
-  async addProduct(
-    @CurrentUser()
-    currentUser: ManufacturerEntity,
+  @UseGuards(AdminGuard)
+  async addProductAdmin(
+    @Args('manufacturerId', { type: () => Int })
+    manufacturerId: number,
     @Args('productInput')
     productInput: ProductInput,
   ) {
     // create new product
     const product = await this.productService.addProduct(
       productInput,
-      currentUser.id,
+      manufacturerId,
     );
     return product.id;
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ManufacturerJwtGuard)
-  async updateProduct(
-    @CurrentUser()
-    currentUser: ManufacturerEntity,
+  @UseGuards(AdminGuard)
+  async updateProductAdmin(
     @Args('productId', { type: () => Int })
     productId: number,
     @Args('productInput')
     productInput: ProductInput,
   ) {
-    const ownershipCheck = await this.productService.checkOwnership(
-      productId,
-      currentUser.id,
-    );
-    if (ownershipCheck == false) {
-      throw new Error('Manufacturer does not owns the product');
-    }
+    // const ownershipCheck = await this.productService.checkOwnership(
+    //   productId,
+    //   currentUser.id,
+    // );
+    // if (ownershipCheck == false) {
+    //   throw new Error('Manufacturer does not owns the product');
+    // }
 
     // update product details
     await this.productService.updateProduct(productId, productInput);
@@ -96,22 +112,20 @@ export class ProductResolver {
   }
 
   @Mutation(() => [ProductVariationType])
-  @UseGuards(ManufacturerJwtGuard)
-  async addProductVariations(
-    @CurrentUser()
-    currentUser: ManufacturerEntity,
+  @UseGuards(AdminGuard)
+  async addProductVariationsAdmin(
     @Args('productVariations', { type: () => [ProductVariationInput] })
     productVariations: [ProductVariationInput],
     @Args('productId', { type: () => Int })
     productId: number,
   ) {
-    const ownershipCheck = await this.productService.checkOwnership(
-      productId,
-      currentUser.id,
-    );
-    if (ownershipCheck == false) {
-      throw new Error('Manufacturer does not owns the product');
-    }
+    // const ownershipCheck = await this.productService.checkOwnership(
+    //   productId,
+    //   currentUser.id,
+    // );
+    // if (ownershipCheck == false) {
+    //   throw new Error('Manufacturer does not owns the product');
+    // }
 
     await this.productVariationService.addMultiple(
       productVariations,
@@ -121,27 +135,28 @@ export class ProductResolver {
     return await this.productVariationService.findAllByProductId(productId);
   }
 
-  @Mutation(() => Boolean)
-  @UseGuards(ManufacturerJwtGuard)
-  async updateProductVariation(
-    @CurrentUser()
-    currentUser: ManufacturerEntity,
+  @Mutation(() => [ProductVariationType])
+  @UseGuards(AdminGuard)
+  async updateProductVariationAdmin(
     @Args('productVariationInput')
     productVariationInput: ProductVariationInput,
     @Args('productVariationId', { type: () => Int })
     productVariationId: number,
   ) {
-    // get the associated product to check ownership
+    // // get the associated product to check ownership
+    // const { productId } = await this.productVariationService.findOneById(
+    //   productVariationId,
+    // );
+    // const ownershipCheck = await this.productService.checkOwnership(
+    //   productId,
+    //   currentUser.id,
+    // );
+    // if (ownershipCheck == false) {
+    //   throw new Error('Manufacturer does not owns the product');
+    // }
     const { productId } = await this.productVariationService.findOneById(
       productVariationId,
     );
-    const ownershipCheck = await this.productService.checkOwnership(
-      productId,
-      currentUser.id,
-    );
-    if (ownershipCheck == false) {
-      throw new Error('Manufacturer does not owns the product');
-    }
 
     // update the product variation
     await this.productVariationService.updateProductVariationById(
@@ -149,30 +164,31 @@ export class ProductResolver {
       productVariationInput,
     );
 
-    return true;
+    return await this.productVariationService.findAllByProductId(productId);
   }
 
   @Mutation(() => [ProductVariationType])
-  @UseGuards(ManufacturerJwtGuard)
-  async deleteProductVariation(
-    @CurrentUser()
-    currentUser: ManufacturerEntity,
+  @UseGuards(AdminGuard)
+  async deleteProductVariationAdmin(
     @Args('productVariationId', { type: () => Int })
     productVariationId: number,
   ) {
-    this.logger.debug('productId');
-    // get the associated product to check ownership
+    // // get the associated product to check ownership
+    // const { productId } = await this.productVariationService.findOneById(
+    //   productVariationId,
+    // );
+    // this.logger.debug(productId);
+    // const ownershipCheck = await this.productService.checkOwnership(
+    //   productId,
+    //   currentUser.id,
+    // );
+    // if (ownershipCheck == false) {
+    //   throw new Error('Manufacturer does not owns the product');
+    // }
+
     const { productId } = await this.productVariationService.findOneById(
       productVariationId,
     );
-    this.logger.debug(productId);
-    const ownershipCheck = await this.productService.checkOwnership(
-      productId,
-      currentUser.id,
-    );
-    if (ownershipCheck == false) {
-      throw new Error('Manufacturer does not owns the product');
-    }
 
     // delete the product variation
     await this.productVariationService.changeProductVariationStatus(
@@ -184,26 +200,25 @@ export class ProductResolver {
   }
 
   @Query(() => UploadProductImageSignType)
-  @UseGuards(ManufacturerJwtGuard)
-  getUploadProductImageSignature() {
+  @UseGuards(AdminGuard)
+  getUploadProductImageSignatureAdmin() {
     return this.productService.generateUploadProductImageSignature();
   }
 
   @Mutation(() => Int)
-  @UseGuards(ManufacturerJwtGuard)
-  async deleteProductImage(
-    @CurrentUser() currentUser: ManufacturerEntity,
+  @UseGuards(AdminGuard)
+  async deleteProductImageAdmin(
     @Args('productId', { type: () => Int }) productId: number,
     @Args('productImageId', { type: () => Int }) productImageId: number,
   ) {
-    // check product ownership
-    const ownershipCheck = await this.productService.checkOwnership(
-      productId,
-      currentUser.id,
-    );
-    if (!ownershipCheck) {
-      throw new Error('Manufacturer does not owns the product');
-    }
+    // // check product ownership
+    // const ownershipCheck = await this.productService.checkOwnership(
+    //   productId,
+    //   currentUser.id,
+    // );
+    // if (!ownershipCheck) {
+    //   throw new Error('Manufacturer does not owns the product');
+    // }
 
     // check productImage ownership by product
     const productImage = await this.productService.findOneProductImageById(
@@ -225,47 +240,32 @@ export class ProductResolver {
   }
 
   @Mutation(() => ProductImageType)
-  @UseGuards(ManufacturerJwtGuard)
-  async addProductImage(
-    @CurrentUser()
-    currentUser: ManufacturerEntity,
+  @UseGuards(AdminGuard)
+  async addProductImageAdmin(
     @Args('productId', { type: () => Int })
     productId: number,
     @Args('imagePublicId')
     imagePublicId: string,
   ) {
-    // check ownership
-    const ownershipCheck = await this.productService.checkOwnership(
-      productId,
-      currentUser.id,
-    );
-    if (ownershipCheck == false) {
-      throw new Error('Manufacturer does not owns the product');
-    }
+    // // check ownership
+    // const ownershipCheck = await this.productService.checkOwnership(
+    //   productId,
+    //   currentUser.id,
+    // );
+    // if (ownershipCheck == false) {
+    //   throw new Error('Manufacturer does not owns the product');
+    // }
 
     // add product image & return
     return await this.productService.addProductImage(productId, imagePublicId);
   }
 
   @Query(() => [ProductType])
-  async getProductsBySearchPhraseForBuyers(
-    @Args('searchPhrase')
-    searchPhrase: string,
+  @UseGuards(AdminGuard)
+  async getManufacturerProductsAdmin(
+    @Args('manufacturerId', { type: () => Int })
+    manufacturerId: number,
   ) {
-    let res: ProductEntity[] = [];
-    const searchWords = searchPhrase.split(' ').filter((word) => word !== '');
-
-    // no search words then return everything
-    if (searchWords.length === 0) {
-      return await this.productService.getAllProductsBySearchPhrase('');
-    }
-
-    for (let i = 0; i < searchWords.length; i++) {
-      const temp = await this.productService.getAllProductsBySearchPhrase(
-        searchWords[i].trim().toLowerCase(),
-      );
-      res = res.concat(temp);
-    }
-    return res;
+    return await this.productService.findProductsByManufacturer(manufacturerId);
   }
 }

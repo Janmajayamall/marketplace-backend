@@ -47,19 +47,14 @@ export class OrderEntity {
   @Column('float')
   grandTotalPrice: number;
 
+  @Column('float', { nullable: true })
+  deliveryCharges: number;
+
   @Column()
   buyerId: number;
 
-  @ManyToOne(() => BuyerEntity)
-  @JoinColumn({ name: 'buyerId' })
-  buyer: BuyerEntity;
-
   @Column()
   manufacturerId: number;
-
-  @ManyToOne(() => ManufacturerEntity)
-  @JoinColumn({ name: 'manufacturerId' })
-  manufacturer: ManufacturerEntity;
 
   @CreateDateColumn()
   timestamp: Date;
@@ -72,10 +67,6 @@ export class OrderEntity {
   @Column()
   productId: number;
 
-  @ManyToOne(() => ProductEntity)
-  @JoinColumn({ name: 'productId' })
-  product: ProductEntity;
-
   @Column('text')
   productName: string;
 
@@ -85,11 +76,11 @@ export class OrderEntity {
   @Column('text')
   productClothComposition: string;
 
-  @Column('float')
-  productWidth: number;
+  @Column('text')
+  productWidth: string;
 
-  @Column('float')
-  productGsm: number;
+  @Column('text')
+  productGsm: string;
 
   @Column('text')
   productPattern: string;
@@ -110,10 +101,6 @@ export class OrderEntity {
   // PRODUCT VARIATION DETAILS
   @Column()
   productVariationId: number;
-
-  @ManyToOne(() => ProductVariationEntity)
-  @JoinColumn({ name: 'productVariationId' })
-  productVariation: ProductVariationEntity;
 
   @Column('float')
   productVariationPrice: number;

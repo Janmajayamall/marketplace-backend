@@ -13,10 +13,10 @@ export class ProductInput {
   clothComposition: string;
 
   @Field()
-  width: number;
+  width: string;
 
   @Field()
-  gsm: number;
+  gsm: string;
 
   @Field()
   pattern: string;
@@ -35,4 +35,7 @@ export class ProductInput {
 
   @Field((type) => [String])
   tags: string[];
+
+  @Field()
+  usage: string;
 }

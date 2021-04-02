@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { BuyerPaymentService } from './buyer-payment.service';
-import { BuyerPaymentType } from './dto/buyer-profile.type';
+import { BuyerPaymentType } from './dto/buyer-payment.type';
 import { BuyerJwtGuard } from 'src/auth/guards/jwt.guards';
 import { CurrentUser } from 'src/shared/decorator';
 import { BuyerEntity } from 'src/buyer/buyer.entity';

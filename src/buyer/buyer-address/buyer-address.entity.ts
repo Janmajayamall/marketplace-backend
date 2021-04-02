@@ -20,7 +20,7 @@ export class BuyerAddressEntity {
   @Column('text')
   line1: string;
 
-  @Column('varchar', { length: 7 })
+  @Column('text')
   pincode: string;
 
   @Column('text')

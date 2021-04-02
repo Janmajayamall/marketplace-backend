@@ -43,23 +43,24 @@ type LoginResponseType {
 }
 
 type Mutation {
-  addProduct(productInput: ProductInput!): String!
-  addProductImage(imagePublicId: String!, productId: Int!): ProductImageType!
-  addProductVariations(productId: Int!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
+  addProductAdmin(manufacturerId: Int!, productInput: ProductInput!): String!
+  addProductImageAdmin(imagePublicId: String!, productId: Int!): ProductImageType!
+  addProductVariationsAdmin(productId: Int!, productVariations: [ProductVariationInput!]!): [ProductVariationType!]!
   buyerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
   buyerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
-  deleteProductImage(productId: Int!, productImageId: Int!): Int!
-  deleteProductVariation(productVariationId: Int!): [ProductVariationType!]!
+  deleteProductImageAdmin(productId: Int!, productImageId: Int!): Int!
+  deleteProductVariationAdmin(productVariationId: Int!): [ProductVariationType!]!
   manufacturerRequestLoginVerificationCode(phoneNumber: String!): Boolean!
   manufacturerVerifyLoginCode(phoneNumber: String!, verificationCode: String!): LoginResponseType!
   placeNewOrder(orderQuantity: Int!, productId: Int!, productVariationId: Int!): Boolean!
   updateBuyerProfile(buyerProfileInput: BuyerProfileInput!): BuyerProfileType!
-  updateProduct(productId: Int!, productInput: ProductInput!): Boolean!
-  updateProductVariation(productVariationId: Int!, productVariationInput: ProductVariationInput!): Boolean!
+  updateProductAdmin(productId: Int!, productInput: ProductInput!): Boolean!
+  updateProductVariationAdmin(productVariationId: Int!, productVariationInput: ProductVariationInput!): [ProductVariationType!]!
 }
 
 type OrderType {
   buyerId: Float!
+  deliveryCharges: Float
   grandTotalPrice: Float!
   id: Float!
   manufacturerId: Float!
@@ -68,10 +69,10 @@ type OrderType {
   orderTotalPrice: Float!
   productClothComposition: String!
   productDescription: String!
-  productGsm: Float!
+  productGsm: String!
   productHsnCode: String!
   productId: Float!
-  productImages: [ProductImageType!]
+  productImages: [ProductImageType!]!
   productMinOrderSize: Float!
   productName: String!
   productPattern: String!
@@ -84,7 +85,7 @@ type OrderType {
   productVariationInStock: Boolean!
   productVariationPrice: Float!
   productVariationRChannel: Float!
-  productWidth: Float!
+  productWidth: String!
   timestamp: String!
   totalTax: Float!
 }
@@ -104,7 +105,7 @@ type ProductImageType {
 input ProductInput {
   clothComposition: String!
   description: String!
-  gsm: Float!
+  gsm: String!
   hsnCode: String!
   minOrderSize: Float!
   name: String!
@@ -112,16 +113,18 @@ input ProductInput {
   referenceId: String
   tags: [String!]!
   taxPercentage: Float!
-  width: Float!
+  usage: String!
+  width: String!
 }
 
 type ProductType {
   clothComposition: String!
   description: String!
-  gsm: Float!
+  gsm: String!
   hsnCode: String!
   id: Float!
   images: [ProductImageType!]!
+  manufacturerId: Float!
   minOrderSize: Float!
   name: String!
   pattern: String!
@@ -129,8 +132,9 @@ type ProductType {
   tags: [String!]!
   taxPercentage: Float!
   timestamp: String!
+  usage: String!
   variations: [ProductVariationType!]!
-  width: Float!
+  width: String!
 }
 
 input ProductVariationInput {
@@ -157,12 +161,13 @@ type Query {
   getBuyerPayments: [BuyerPaymentType!]!
   getBuyerProfile: BuyerProfileType
   getManufacturerProducts: [ProductType!]!
+  getManufacturerProductsAdmin(manufacturerId: Int!): [ProductType!]!
   getOrderDetailsByIdForManufacturer(orderId: Int!): OrderTypeWithBuyerProfile!
   getOrderListForBuyer: [OrderType!]!
   getOrderListForManufacturer: [OrderType!]!
   getProductDetails(productId: Int!): ProductType!
   getProductsBySearchPhraseForBuyers(searchPhrase: String!): [ProductType!]!
-  getUploadProductImageSignature: UploadProductImageSignType!
+  getUploadProductImageSignatureAdmin: UploadProductImageSignType!
   isBuyerAuthenticated: Boolean!
   isManufacturerAuthenticated: Boolean!
 }
