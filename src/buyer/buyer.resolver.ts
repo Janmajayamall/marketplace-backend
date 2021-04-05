@@ -13,6 +13,7 @@ import { BuyerJwtGuard } from 'src/auth/guards/jwt.guards';
 import { BuyerProfileType } from './buyer-profile/dto/buyer-profile.type';
 import { AuthGuard } from '@nestjs/passport';
 import { BuyerProfileInput } from './buyer-profile/dto/buyer-profile.input';
+import { PhoneVerificationService } from 'src/phone-verification/phone-verification.service';
 
 @Resolver()
 export class BuyerResolver {
@@ -21,6 +22,7 @@ export class BuyerResolver {
   constructor(
     private readonly jwtService: JwtService,
     private buyerService: BuyerService,
+    private phoneVerificationService: PhoneVerificationService,
   ) {}
 
   @Query(() => Boolean)
@@ -33,7 +35,15 @@ export class BuyerResolver {
   async buyerRequestLoginVerificationCode(
     @Args('phoneNumber') phoneNumber: string,
   ) {
-    // send the verification code to phone number
+    // validate phone number
+    if (phoneNumber.trim().length !== 8) {
+      throw new Error('Invalid phone number');
+    }
+
+    // initiate phone verification
+    await this.phoneVerificationService.sendVerificationCode(
+      `852${phoneNumber}`,
+    );
 
     return true;
   }
@@ -45,36 +55,66 @@ export class BuyerResolver {
     @ResGql()
     res: Response,
   ) {
-    // check the verification code
-    // if the verification code is correct
-    if (verificationCode === '1202') {
-      // get buyer with phoneNumber
-      let buyer = await this.buyerService.findBuyerByPhoneNumber(phoneNumber);
-
-      // if buyer does not exists by phoneNumber, then create a new buyer
-      if (!buyer) {
-        buyer = await this.buyerService.createBuyer(phoneNumber);
-      }
-
-      // create jwt
-      const jwt = this.jwtService.sign({ ...buyer, type: 'buyer' });
-
-      // set cookie
-      // res.cookie('token', `${jwt}`, {
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV !== 'development',
-      //   sameSite: 'none',
-      //   maxAge: 100000000,
-      //   path: '/',
-      // });
-
-      return {
-        token: `Bearer ${jwt}`,
-      };
-    } else {
-      // throw unauthorized error
-      throw new UnauthorizedException();
+    // validate phone number
+    if (phoneNumber.trim().length !== 8) {
+      throw new Error('Invalid phone number');
     }
+
+    // validate verification code
+    if (verificationCode.trim().length !== 6) {
+      throw new Error('Invalid verification code');
+    }
+
+    // check the verification code
+    await this.phoneVerificationService.verifyVerificationCode(
+      `852${phoneNumber.trim()}`,
+      verificationCode.trim(),
+    );
+
+    // get buyer with phoneNumber
+    let buyer = await this.buyerService.findBuyerByPhoneNumber(phoneNumber);
+
+    // if buyer does not exists by phoneNumber, then create a new buyer
+    if (!buyer) {
+      buyer = await this.buyerService.createBuyer(phoneNumber);
+    }
+
+    // create jwt
+    const jwt = this.jwtService.sign({ ...buyer, type: 'buyer' });
+
+    return {
+      token: `Bearer ${jwt}`,
+    };
+
+    // // if the verification code is correct
+    // if (verificationCode === '1202') {
+    //   // get buyer with phoneNumber
+    //   let buyer = await this.buyerService.findBuyerByPhoneNumber(phoneNumber);
+
+    //   // if buyer does not exists by phoneNumber, then create a new buyer
+    //   if (!buyer) {
+    //     buyer = await this.buyerService.createBuyer(phoneNumber);
+    //   }
+
+    //   // create jwt
+    //   const jwt = this.jwtService.sign({ ...buyer, type: 'buyer' });
+
+    //   // set cookie
+    //   // res.cookie('token', `${jwt}`, {
+    //   //   httpOnly: true,
+    //   //   secure: process.env.NODE_ENV !== 'development',
+    //   //   sameSite: 'none',
+    //   //   maxAge: 100000000,
+    //   //   path: '/',
+    //   // });
+
+    //   return {
+    //     token: `Bearer ${jwt}`,
+    //   };
+    // } else {
+    //   // throw unauthorized error
+    //   throw new UnauthorizedException();
+    // }
   }
 
   @Mutation(() => BuyerProfileType)

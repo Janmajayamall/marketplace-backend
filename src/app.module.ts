@@ -13,12 +13,14 @@ import { BuyerModule } from './buyer/buyer.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
 import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
+import { PhoneVerificationModule } from './phone-verification/phone-verification.module';
 
 console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
 console.log(
   `**************************** CONNECTED TO ${process.env.NODE_ENV.toUpperCase()} DATABASE ****************************`,
 );
 console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
+
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -56,9 +58,9 @@ console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
     ProductVariationModule,
     AuthModule,
     BuyerModule,
-
     OrderModule,
     BuyerPaymentModule,
+    PhoneVerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

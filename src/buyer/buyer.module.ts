@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PhoneVerificationModule } from 'src/phone-verification/phone-verification.module';
 import { BuyerAddressEntity } from './buyer-address/buyer-address.entity';
 import { BuyerProfileEntity } from './buyer-profile/buyer-profile.entity';
 import { BuyerEntity } from './buyer.entity';
@@ -26,6 +27,7 @@ import { BuyerService } from './buyer.service';
         };
       },
     }),
+    PhoneVerificationModule,
   ],
   providers: [BuyerService, BuyerResolver],
   exports: [BuyerService],
