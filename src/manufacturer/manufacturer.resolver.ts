@@ -21,6 +21,7 @@ import { Response } from 'express';
 import { ResGql } from 'src/shared/decorator';
 import { serialize } from 'cookie';
 import { ManufacturerJwtGuard } from 'src/auth/guards/jwt.guards';
+import { PhoneVerificationService } from 'src/phone-verification/phone-verification.service';
 
 @Resolver()
 export class ManufacturerResolver {
@@ -29,6 +30,7 @@ export class ManufacturerResolver {
   constructor(
     private readonly jwtService: JwtService,
     private manufacturerService: ManufacturerService,
+    private phoneVerificationService: PhoneVerificationService,
   ) {}
 
   @Query(() => Boolean)
@@ -41,9 +43,14 @@ export class ManufacturerResolver {
   async manufacturerRequestLoginVerificationCode(
     @Args('phoneNumber') phoneNumber: string,
   ) {
-    // get manufacturer with phoneNumber
+    // validate phone number
+    if (phoneNumber.trim().length !== 8) {
+      throw new Error('Invalid phone number');
+    }
+
+    // check whether manufacturer with phone number exists or not
     const manufacturer = await this.manufacturerService.findManufacturerByPhoneNumber(
-      phoneNumber,
+      phoneNumber.trim(),
     );
 
     // if manufacturer does not exists then throw registration error
@@ -51,7 +58,11 @@ export class ManufacturerResolver {
       throw new Error('Manufacturer is not registered');
     }
 
-    // send the verification code
+    // initiate phone verification
+    await this.phoneVerificationService.sendVerificationCode(
+      `852${phoneNumber.trim()}`,
+    );
+
     return true;
   }
 
@@ -62,41 +73,76 @@ export class ManufacturerResolver {
     @ResGql()
     res: Response,
   ) {
+    // validate phone number
+    if (phoneNumber.trim().length !== 8) {
+      throw new Error('Invalid phone number');
+    }
+
+    // validate verification code
+    if (verificationCode.trim().length !== 6) {
+      throw new Error('Invalid verification code');
+    }
+
     // check verification code
+    await this.phoneVerificationService.verifyVerificationCode(
+      `852${phoneNumber.trim()}`,
+      verificationCode.trim(),
+    );
+
+    // manufacturer with phone number is authenticated
+    // get manufacturer with phoneNumber
+    const manufacturer = await this.manufacturerService.findManufacturerByPhoneNumber(
+      phoneNumber.trim(),
+    );
+
+    // if manufacturer does not exists then throw registration error
+    if (!manufacturer) {
+      throw new Error('Manufacturer is not registered');
+    }
+
+    // create jwt
+    const jwt = this.jwtService.sign({
+      ...manufacturer,
+      type: 'manufacturer',
+    });
+
+    return {
+      token: `Bearer ${jwt}`,
+    };
 
     // if the verification code is correct
-    if (verificationCode === '1202') {
-      // get manufacturer with phoneNumber
-      const manufacturer = await this.manufacturerService.findManufacturerByPhoneNumber(
-        phoneNumber,
-      );
+    // if (verificationCode === '1202') {
+    //   // get manufacturer with phoneNumber
+    //   const manufacturer = await this.manufacturerService.findManufacturerByPhoneNumber(
+    //     phoneNumber,
+    //   );
 
-      // if manufacturer does not exists then throw registration error
-      if (!manufacturer) {
-        throw new Error('Manufacturer is not registered');
-      }
+    //   // if manufacturer does not exists then throw registration error
+    //   if (!manufacturer) {
+    //     throw new Error('Manufacturer is not registered');
+    //   }
 
-      // create jwt
-      const jwt = this.jwtService.sign({
-        ...manufacturer,
-        type: 'manufacturer',
-      });
+    //   // create jwt
+    //   const jwt = this.jwtService.sign({
+    //     ...manufacturer,
+    //     type: 'manufacturer',
+    //   });
 
-      // set cookie
-      // res.cookie('token', `${jwt}`, {
-      //   httpOnly: true,
-      //   // secure: process.env.NODE_ENV !== 'development',
-      //   sameSite: 'none',
-      //   maxAge: 100000000,
-      //   path: '/',
-      // });
+    //   // set cookie
+    //   // res.cookie('token', `${jwt}`, {
+    //   //   httpOnly: true,
+    //   //   // secure: process.env.NODE_ENV !== 'development',
+    //   //   sameSite: 'none',
+    //   //   maxAge: 100000000,
+    //   //   path: '/',
+    //   // });
 
-      return {
-        token: `Bearer ${jwt}`,
-      };
-    } else {
-      // throw unauthorized error
-      throw new UnauthorizedException();
-    }
+    //   return {
+    //     token: `Bearer ${jwt}`,
+    //   };
+    // } else {
+    //   // throw unauthorized error
+    //   throw new UnauthorizedException();
+    // }
   }
 }

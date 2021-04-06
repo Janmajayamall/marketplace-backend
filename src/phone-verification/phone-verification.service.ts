@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, RepositoryNotTreeError } from 'typeorm';
 import { PhoneVerificationEntity } from './phone-verification.entity';
 import initMB from 'messagebird';
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 @Injectable()
 export class PhoneVerificationService {
@@ -28,8 +27,9 @@ export class PhoneVerificationService {
     }
 
     // send the verification code
+    // REMOVE THIS (true)
     const sendResponse: any =
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV === 'production' || true
         ? await new Promise((resolve, rejects) => {
             this.messagebird.verify.create(
               phoneNumber,
@@ -83,7 +83,8 @@ export class PhoneVerificationService {
     }
 
     // if in dev then don't need to verify token
-    if (process.env.NODE_ENV === 'development') {
+    // REMOVE THIS (true)
+    if (process.env.NODE_ENV === 'development' || true) {
       return;
     }
 

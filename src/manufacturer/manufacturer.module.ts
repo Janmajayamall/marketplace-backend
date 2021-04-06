@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PhoneVerificationModule } from 'src/phone-verification/phone-verification.module';
 import { ManufacturerEntity } from './manufacturer.entity';
 import { ManufacturerResolver } from './manufacturer.resolver';
 import { ManufacturerService } from './manufacturer.service';
@@ -21,6 +22,7 @@ import { ManufacturerService } from './manufacturer.service';
         };
       },
     }),
+    PhoneVerificationModule,
   ],
   providers: [ManufacturerService, ManufacturerResolver],
   exports: [ManufacturerService],

@@ -42,7 +42,7 @@ export class BuyerResolver {
 
     // initiate phone verification
     await this.phoneVerificationService.sendVerificationCode(
-      `852${phoneNumber}`,
+      `852${phoneNumber.trim()}`,
     );
 
     return true;
