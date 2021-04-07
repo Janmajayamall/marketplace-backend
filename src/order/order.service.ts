@@ -102,7 +102,7 @@ export class OrderService {
       })
       .orderBy('order.timestamp', 'DESC')
       .leftJoinAndMapMany(
-        'order.images',
+        'order.productImages',
         'product-image',
         'product-image',
         'product-image.productId = order.productId',
