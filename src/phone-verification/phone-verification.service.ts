@@ -27,9 +27,9 @@ export class PhoneVerificationService {
     }
 
     // send the verification code
-    // REMOVE THIS (true)
+    // REMOVE THIS (false)
     const sendResponse: any =
-      process.env.NODE_ENV === 'production' || true
+      process.env.NODE_ENV === 'production' && false
         ? await new Promise((resolve, rejects) => {
             this.messagebird.verify.create(
               phoneNumber,
