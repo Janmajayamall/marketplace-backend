@@ -14,6 +14,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
 import { BuyerPaymentModule } from './buyer-payment/buyer-payment.module';
 import { PhoneVerificationModule } from './phone-verification/phone-verification.module';
+import { RequestController } from './request/request.controller';
+import { RequestModule } from './request/request.module';
 
 console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
 console.log(
@@ -53,16 +55,17 @@ console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
       envFilePath: [`.${process.env.NODE_ENV}.env`],
       isGlobal: true,
     }),
-    ManufacturerModule,
-    ProductModule,
-    ProductVariationModule,
-    AuthModule,
-    BuyerModule,
-    OrderModule,
-    BuyerPaymentModule,
-    PhoneVerificationModule,
+    RequestModule,
+    // ManufacturerModule,
+    // ProductModule,
+    // ProductVariationModule,
+    // AuthModule,
+    // BuyerModule,
+    // OrderModule,
+    // BuyerPaymentModule,
+    // PhoneVerificationModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, AuthService],
+  controllers: [AppController, RequestController],
+  providers: [AppService],
 })
 export class AppModule {}
