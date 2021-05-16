@@ -1,4 +1,3 @@
-
 import {
   Entity,
   Column,
@@ -12,16 +11,18 @@ export class RequestEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("text")
-  details: string
+  @Column('text')
+  details: string;
 
-  @Column("text")
-  phoneNumber: string
+  @Column('text')
+  phoneNumber: string;
+
+  @Column('text', { default: 'NEW' })
+  status: string;
 
   @CreateDateColumn()
   timestamp: Date;
 
   @UpdateDateColumn()
   lastModifiedTimestamp: Date;
-
 }
