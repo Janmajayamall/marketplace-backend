@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RequestInputType } from './dto/request.input';
-import { RequestEntity } from './request.entity';
+import { RequestEntity } from './request.entity_new';
 
 @Injectable()
 export class RequestService {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RequestController } from './request.controller';
-import { RequestEntity } from './request.entity';
+import { RequestEntity } from './request.entity_new';
 import { RequestResolver } from './request.resolver';
 import { RequestService } from './request.service';
 

@@ -45,7 +45,7 @@ console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
-          entities: ['dist/**/*.entity{.ts,.js}'],
+          entities: ['dist/**/*.entity_new{.ts,.js}'],
           synchronize: true,
           logging: true,
         };
