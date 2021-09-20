@@ -1,8 +1,8 @@
-#  Buyer Portal
+#  Marketplace - backend
 
-Buyer portal for a B2B marketplace that handles stock management, finance, order management, delivery, and government verifications. 
+Backend for a B2B marketplace in medical field. 
 
-I developed this as a freelancing project for a client based out of Mumbai (India).
+I developed this for a freelancing project.
 
 Feel free to use for whatever purpose you like.
 
